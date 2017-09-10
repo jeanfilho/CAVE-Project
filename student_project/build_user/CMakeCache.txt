@@ -139,6 +139,20 @@ CMAKE_RC_COMPILER:FILEPATH=rc
 //Flags for Windows Resource Compiler.
 CMAKE_RC_FLAGS:STRING=/DWIN32
 
+//Flags for Windows Resource Compiler during debug builds.
+CMAKE_RC_FLAGS_DEBUG:STRING=/D_DEBUG
+
+//Flags for Windows Resource Compiler during release builds for
+// minimum size.
+CMAKE_RC_FLAGS_MINSIZEREL:STRING=
+
+//Flags for Windows Resource Compiler during release builds.
+CMAKE_RC_FLAGS_RELEASE:STRING=
+
+//Flags for Windows Resource Compiler during release builds with
+// debug info.
+CMAKE_RC_FLAGS_RELWITHDEBINFO:STRING=
+
 //Flags used by the linker during the creation of dll's.
 CMAKE_SHARED_LINKER_FLAGS:STRING=/machine:x64
 
@@ -549,9 +563,9 @@ CMAKE_CACHEFILE_DIR:INTERNAL=d:/Documents/GitProjects/CAVE-Project/student_proje
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=9
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=0
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake.exe
 //Path to cpack program executable.
@@ -624,8 +638,16 @@ CMAKE_RC_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_RC_COMPILER_WORKS:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RC_FLAGS
 CMAKE_RC_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_DEBUG
+CMAKE_RC_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_MINSIZEREL
+CMAKE_RC_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_RELEASE
+CMAKE_RC_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_RELWITHDEBINFO
+CMAKE_RC_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Path to CMake installation.
-CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.8
+CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.9
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS
 CMAKE_SHARED_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS_DEBUG

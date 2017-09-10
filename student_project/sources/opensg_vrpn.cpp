@@ -152,7 +152,6 @@ void keyboard(unsigned char k, int x, int y)
 void setupGLUT(int *argc, char *argv[])
 {
 	glutInit(argc, argv);
-
 	glutInitDisplayMode(GLUT_RGB  |GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("OpenSG CSMDemo with VRPN API");
 	glutDisplayFunc([]()
@@ -237,6 +236,7 @@ int main(int argc, char **argv)
 		}
 
 		setupGLUT(&argc, argv);
+
 		InitTracker(cfg);
 
 		MultiDisplayWindowRefPtr mwin = createAppWindow(cfg, cfg.getBroadcastaddress());
@@ -246,11 +246,11 @@ int main(int argc, char **argv)
 		commitChanges();
 
 		mgr = new OSGCSM::CAVESceneManager(&cfg);
-		mgr->setWindow(mwin );	
-		mgr->setRoot(scene);	
+		mgr->setWindow(mwin );
+		mgr->setRoot(scene);
 		mgr->showAll();
-		mgr->getWindow()->init();		
-		mgr->turnWandOff();		
+		mgr->getWindow()->init();
+		mgr->turnWandOff();
 	}
 	catch(const std::exception& e)
 	{
