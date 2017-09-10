@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{36A1AEA5-66AA-3444-8AE7-639659B41767}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+ <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    </PropertyGroup>
+ <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Documents\GitProjects\CAVE-Project\student_project\includes;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\opensg\include;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\opensg\include\OpenSG;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\boost_1_57_0\include\boost-1_57;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\freeglut\include;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\include;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\vrpn\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Documents\GitProjects\CAVE-Project\student_project\CMakeLists.txt">
+     <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Documents/GitProjects/CAVE-Project/student_project/CMakeLists.txt</Message>
+     <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -HD:/Documents/GitProjects/CAVE-Project/student_project -BD:/Documents/GitProjects/CAVE-Project/student_project/build_user --check-stamp-file D:/Documents/GitProjects/CAVE-Project/student_project/build_user/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+     <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:/Documents/GitProjects/CAVE-Project/student_project/CMakeLists.txt;D:\Documents\GitProjects\CAVE-Project\student_project\CMakeLists.txt;D:\Documents\GitProjects\CAVE-Project\student_project\build_user\CMakeFiles\3.8.0-rc1\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeSystemSpecificInitialize.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\build_user\CMakeFiles\3.8.0-rc1\CMakeCCompiler.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\build_user\CMakeFiles\3.8.0-rc1\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\Windows-MSVC.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\build_user\CMakeFiles\3.8.0-rc1\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCommonLanguageInclude.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\cmake\Modules\AddProject.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\CMakeParseArguments.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\config\mono.csm;D:\Documents\GitProjects\CAVE-Project\student_project\cmake\Modules\FindOpenSG.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindBoost.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindGLUT.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\cmake\CAVESceneManagerConfigVersion.cmake;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\cmake\CAVESceneManagerConfig.cmake;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\cmake\CAVESceneManagerTargets.cmake;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\cmake\CAVESceneManagerTargets-debug.cmake;D:\Documents\GitProjects\CAVE-Project\libraries\install\vs11_64\invrs\cmake\CAVESceneManagerTargets-release.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\cmake\Modules\FindVRPN.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\cmake\Modules\Findquatlib.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindX11.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\Documents\GitProjects\CAVE-Project\student_project\cmake\Modules\template_vs10-11.vcxproj.user.in;D:\Documents\GitProjects\CAVE-Project\student_project\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+     <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Documents\GitProjects\CAVE-Project\student_project\build_user\CMakeFiles\generate.stamp</Outputs>
+     <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D:\Documents\GitProjects\CAVE-Project\student_project\build_user\ZERO_CHECK.vcxproj">
+      <Project>3D9B7698-699A-36C9-B057-7D71B277F5F9</Project>
+      <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Documents\GitProjects\CAVE-Project\student_project\build_user\MyProject.vcxproj">
+      <Project>83116F19-CED7-36F1-9FBF-D789654BE54E</Project>
+      <Name>MyProject</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

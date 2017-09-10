@@ -1,0 +1,42 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CMakePredefinedTargets", "CMakePredefinedTargets", "{3E38AB5F-DF7D-33FE-9928-7EE53A1229E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MyProject", "MyProject", "{CBD11219-A6AF-3E1B-A507-777E90E6D6D1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{36A1AEA5-66AA-3444-8AE7-639659B41767}"
+	ProjectSection(ProjectDependencies) = postProject
+		{83116F19-CED7-36F1-9FBF-D789654BE54E} = {83116F19-CED7-36F1-9FBF-D789654BE54E}
+		{3D9B7698-699A-36C9-B057-7D71B277F5F9} = {3D9B7698-699A-36C9-B057-7D71B277F5F9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyProject", "MyProject.vcxproj", "{83116F19-CED7-36F1-9FBF-D789654BE54E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3D9B7698-699A-36C9-B057-7D71B277F5F9} = {3D9B7698-699A-36C9-B057-7D71B277F5F9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "ZERO_CHECK.vcxproj", "{3D9B7698-699A-36C9-B057-7D71B277F5F9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36A1AEA5-66AA-3444-8AE7-639659B41767}.Release|x64.ActiveCfg = Release|x64
+		{83116F19-CED7-36F1-9FBF-D789654BE54E}.Release|x64.ActiveCfg = Release|x64
+		{83116F19-CED7-36F1-9FBF-D789654BE54E}.Release|x64.Build.0 = Release|x64
+		{3D9B7698-699A-36C9-B057-7D71B277F5F9}.Release|x64.ActiveCfg = Release|x64
+		{3D9B7698-699A-36C9-B057-7D71B277F5F9}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{36A1AEA5-66AA-3444-8AE7-639659B41767} = {3E38AB5F-DF7D-33FE-9928-7EE53A1229E3}
+		{3D9B7698-699A-36C9-B057-7D71B277F5F9} = {3E38AB5F-DF7D-33FE-9928-7EE53A1229E3}
+		{83116F19-CED7-36F1-9FBF-D789654BE54E} = {CBD11219-A6AF-3E1B-A507-777E90E6D6D1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
