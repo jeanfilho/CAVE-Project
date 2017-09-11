@@ -19,6 +19,8 @@
 #include <vrpn_Button.h>
 #include <vrpn_Analog.h>
 
+#include "Scene.h"
+
 OSG_USING_NAMESPACE
 
 OSGCSM::CAVEConfig cfg;
@@ -26,6 +28,11 @@ OSGCSM::CAVESceneManager *mgr = nullptr;
 vrpn_Tracker_Remote* tracker =  nullptr;
 vrpn_Button_Remote* button = nullptr;
 vrpn_Analog_Remote* analog = nullptr;
+
+Scene scene = Scene();
+float horizontalSpeed = 5;
+float verticalSpeed = 5;
+float mouseSensitivity = 5;
 
 void cleanup()
 {
@@ -36,12 +43,6 @@ void cleanup()
 }
 
 void print_tracker();
-
-NodeTransitPtr buildScene()
-{
-	// you will see a donut at the floor, slightly skewed, depending on head_position
-	return makeTorus(10.f, 50.f, 32.f, 64.f);
-}
 
 template<typename T>
 T scale_tracker2cm(const T& value)
@@ -108,6 +109,7 @@ void check_tracker()
 	tracker->mainloop();
 	button->mainloop();
 	analog->mainloop();
+
 }
 
 void print_tracker()
@@ -144,6 +146,18 @@ void keyboard(unsigned char k, int x, int y)
 		case 'i':
 			print_tracker();
 			break;
+
+		/* Movement */
+		case 'w':
+			mgr->setTranslation(mgr->getTranslation
+			break;
+		case 's':
+			break;
+		case 'd':
+			break;
+		case 'a':
+			break;
+
 		default:
 			std::cout << "Key '" << k << "' ignored\n";
 	}
@@ -188,7 +202,7 @@ int main(int argc, char **argv)
 	try
 	{
 		bool cfgIsSet = false;
-		NodeRefPtr scene = nullptr;
+		NodeRefPtr gameScene = nullptr;
 
 		// ChangeList needs to be set for OpenSG 1.4
 		ChangeList::setReadWriteDefault();
@@ -211,7 +225,7 @@ int main(int argc, char **argv)
 				}
 			} else {
 				std::cout << "Loading scene file '" << argv[a] << "'\n";
-				scene = SceneFileHandler::the()->read(argv[a], NULL);
+				gameScene = SceneFileHandler::the()->read(argv[a], NULL);
 			}
 		}
 
@@ -241,16 +255,21 @@ int main(int argc, char **argv)
 
 		MultiDisplayWindowRefPtr mwin = createAppWindow(cfg, cfg.getBroadcastaddress());
 
-		if (!scene) 
-			scene = buildScene();
+		if (!gameScene) 
+		{
+			//Initialize own game scene
+			scene.initialize();
+			gameScene = scene.getBase();
+		}
 		commitChanges();
-
+		
 		mgr = new OSGCSM::CAVESceneManager(&cfg);
 		mgr->setWindow(mwin );
-		mgr->setRoot(scene);
+		mgr->setRoot(gameScene);
 		mgr->showAll();
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
+		mgr->setHeadlight(false);
 	}
 	catch(const std::exception& e)
 	{
