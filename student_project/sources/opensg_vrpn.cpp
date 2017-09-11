@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <ios>
+#include <ctime>
 
 #include <OpenSG/OSGGLUT.h>
 #include <OpenSG/OSGConfig.h>
@@ -20,6 +21,7 @@
 #include <vrpn_Analog.h>
 
 #include "Scene.h"
+#include "TimeManager.h"
 
 OSG_USING_NAMESPACE
 
@@ -30,9 +32,16 @@ vrpn_Button_Remote* button = nullptr;
 vrpn_Analog_Remote* analog = nullptr;
 
 Scene scene = Scene();
-float horizontalSpeed = 5;
-float verticalSpeed = 5;
-float mouseSensitivity = 5;
+TimeManager timeMgr = TimeManager();
+float horizontalSpeed = 50;
+float verticalSpeed = 50;
+float mouseSensitivity = 50;
+float amountToMoveX, amountToMoveZ, amountToMoveY;
+
+void updateTime()
+{
+
+}
 
 void cleanup()
 {
@@ -149,15 +158,45 @@ void keyboard(unsigned char k, int x, int y)
 
 		/* Movement */
 		case 'w':
-			mgr->setTranslation(mgr->getTranslation
+			amountToMoveZ = -horizontalSpeed * timeMgr.deltaTime();
 			break;
 		case 's':
+			amountToMoveZ = horizontalSpeed * timeMgr.deltaTime();
 			break;
 		case 'd':
+			amountToMoveX = horizontalSpeed * timeMgr.deltaTime();
 			break;
 		case 'a':
+			amountToMoveX = -horizontalSpeed * timeMgr.deltaTime();
 			break;
+		case 32:
+			amountToMoveY = verticalSpeed * timeMgr.deltaTime();
+			break;
+		case 'c':
+			amountToMoveY = -verticalSpeed * timeMgr.deltaTime();
+			break;
+		default:
+			std::cout << "Key '" << k << "' ignored\n";
+	}
+}
 
+void keyboardUp(unsigned char k, int x, int y)
+{
+	switch(k)
+	{
+		/* Movement stop*/
+		case 'w':
+		case 's':
+			amountToMoveZ = 0;
+			break;
+		case 'd':
+		case 'a':
+			amountToMoveX = 0;
+			break;
+		case 32:
+		case 'c':
+			amountToMoveY = 0;
+			break;
 		default:
 			std::cout << "Key '" << k << "' ignored\n";
 	}
@@ -180,12 +219,16 @@ void setupGLUT(int *argc, char *argv[])
 		glutPostRedisplay();
 	});
 	glutKeyboardFunc(keyboard);
+	glutKeyboardUpFunc(keyboardUp);
 	glutIdleFunc([]()
 	{
+		timeMgr.update();
+
 		check_tracker();
 		const auto speed = 1.f;
 		mgr->setUserTransform(head_position, head_orientation);
 		mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
+		mgr->setTranslation(mgr->getTranslation() + Vec3f(amountToMoveX, amountToMoveY, amountToMoveZ));
 		commitChanges();
 		mgr->redraw();
 		// the changelist should be cleared - else things could be copied multiple times

@@ -15,6 +15,9 @@
     <ClInclude Include="..\sources\Scene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\TimeManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Documents\GitProjects\CAVE-Project\student_project\CMakeLists.txt" />
