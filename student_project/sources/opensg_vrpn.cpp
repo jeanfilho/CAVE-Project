@@ -35,8 +35,11 @@ Scene scene = Scene();
 TimeManager timeMgr = TimeManager();
 float horizontalSpeed = 50;
 float verticalSpeed = 50;
-float mouseSensitivity = 50;
+float mouseSensitivity = 2;
 float amountToMoveX, amountToMoveZ, amountToMoveY;
+
+bool isMouseWarped;
+Quaternion rotation;
 
 void updateTime()
 {
@@ -202,6 +205,36 @@ void keyboardUp(unsigned char k, int x, int y)
 	}
 }
 
+
+void motionPassive(int x, int y)
+{
+	/* Mouse Rotation */
+	if(!isMouseWarped)
+	{
+		int middleX = glutGet(GLUT_WINDOW_WIDTH)/2;
+		int middleY = glutGet(GLUT_WINDOW_HEIGHT)/2;
+	
+		int deltaX = x - middleX;
+		int deltaY = y - middleY;
+		float rotateY =-deltaX * timeMgr.deltaTime() * mouseSensitivity;
+
+		rotation *= Quaternion(Vec3f(0,1,0), rotateY);
+		rotation.normalize();	
+		mgr->addYRotate(rotateY);
+		
+		isMouseWarped = true;
+		glutWarpPointer(middleX, middleY);		
+	}
+	else
+		isMouseWarped = false;
+	
+}
+
+void motion(int x, int y)
+{
+	motionPassive(x, y);
+}
+
 void setupGLUT(int *argc, char *argv[])
 {
 	glutInit(argc, argv);
@@ -218,6 +251,8 @@ void setupGLUT(int *argc, char *argv[])
 		mgr->resize(w, h);
 		glutPostRedisplay();
 	});
+	glutMotionFunc(motion);
+	glutPassiveMotionFunc(motionPassive);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
 	glutIdleFunc([]()
@@ -228,7 +263,12 @@ void setupGLUT(int *argc, char *argv[])
 		const auto speed = 1.f;
 		mgr->setUserTransform(head_position, head_orientation);
 		mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
-		mgr->setTranslation(mgr->getTranslation() + Vec3f(amountToMoveX, amountToMoveY, amountToMoveZ));
+		
+		/* Keyboard Translation */
+		Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
+		translation = (rotation * translation) * rotation.conj();
+		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x(), translation.y(), translation.z()));
+		
 		commitChanges();
 		mgr->redraw();
 		// the changelist should be cleared - else things could be copied multiple times
@@ -307,12 +347,13 @@ int main(int argc, char **argv)
 		commitChanges();
 		
 		mgr = new OSGCSM::CAVESceneManager(&cfg);
-		mgr->setWindow(mwin );
+		mgr->setWindow(mwin);
 		mgr->setRoot(gameScene);
 		mgr->showAll();
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
+		mgr->addToTrolley(makeSphere(0,10), 0);
 	}
 	catch(const std::exception& e)
 	{

@@ -2,8 +2,7 @@
 
 
 Scene::Scene()
-{
-	
+{	
 }
 
 
@@ -23,8 +22,14 @@ void Scene::initialize()
 	/*Lit Scene*/
 	NodeRecPtr world = Node::create();
 	world->setCore(Group::create());
-	world->addChild(makeTorus(10.f, 50.f, 32.f, 64.f));	
 
+	world->addChild(makeTorus(10.f, 50.f, 32.f, 64.f));
+	ComponentTransformRecPtr transform = ComponentTransform::create();
+	transform->setTranslation(Vec3f(120,0,0));
+	NodeTransitPtr node = makeNodeFor(transform);
+	node->addChild(makeTorus(10.f, 50.f, 32.f, 64.f));
+	world->addChild(node);
+	
 	/*Light Sources*/	
 	NodeRecPtr lights = Node::create();
 	lights->setCore(Group::create());

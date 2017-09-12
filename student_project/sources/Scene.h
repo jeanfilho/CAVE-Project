@@ -7,6 +7,7 @@
 #include <OpenSG/OSGMultiDisplayWindow.h>
 #include <OpenSG/OSGSceneFileHandler.h>
 #include <OpenSG/OSGDirectionalLight.h>
+#include <OpenSG/OSGComponentTransform.h>
 
 OSG_USING_NAMESPACE
 
@@ -20,6 +21,7 @@ public:
 	~Scene();
 
 	void initialize();
+	void moveNavSphere(Vec3f pos);
 	NodeTransitPtr getBase();
 
 };
