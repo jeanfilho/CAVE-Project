@@ -269,6 +269,9 @@ void setupGLUT(int *argc, char *argv[])
 		translation = (rotation * translation) * rotation.conj();
 		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x(), translation.y(), translation.z()));
 		
+		/* Update scene */
+		scene.update(timeMgr.deltaTime());
+
 		commitChanges();
 		mgr->redraw();
 		// the changelist should be cleared - else things could be copied multiple times

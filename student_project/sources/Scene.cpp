@@ -1,8 +1,10 @@
 #include "Scene.h"
 
-
 Scene::Scene()
-{	
+{	riverSections = std::vector<GameObject>();
+
+	riverLength = 1000;
+	boatSpeed = 100;
 }
 
 
@@ -23,12 +25,16 @@ void Scene::initialize()
 	NodeRecPtr world = Node::create();
 	world->setCore(Group::create());
 
-	world->addChild(makeTorus(10.f, 50.f, 32.f, 64.f));
-	ComponentTransformRecPtr transform = ComponentTransform::create();
-	transform->setTranslation(Vec3f(120,0,0));
-	NodeTransitPtr node = makeNodeFor(transform);
-	node->addChild(makeTorus(10.f, 50.f, 32.f, 64.f));
-	world->addChild(node);
+	/* Load river sections */
+	NodeRecPtr river = SceneFileHandler::the()->read("models/river.3ds");
+	for(int i = 0; i < 4; i++)
+	{
+		ComponentTransformRecPtr trans = ComponentTransform::create();
+		trans->setTranslation(Vec3f(0, 0, -i * riverLength));
+		GameObject riverSection = GameObject(trans, OSG::deepCloneTree(river));
+		riverSections.push_back(riverSection);
+		world->addChild(riverSection.getNode());
+	}
 	
 	/*Light Sources*/	
 	NodeRecPtr lights = Node::create();
@@ -43,4 +49,14 @@ void Scene::initialize()
 NodeTransitPtr Scene::getBase()
 {
 	return NodeTransitPtr(base);
+}
+
+void Scene::update(float deltaTime)
+{
+	for each (GameObject go in riverSections)
+	{
+		go.setTranslation(go.getTranslation() + boatSpeed * deltaTime * Vec3f(0,0,1));
+		if(go.getTranslation().z() > riverLength)
+			go.setTranslation(go.getTranslation() + Vec3f(0,0,-((int)riverSections.size()) * riverLength));
+	}
 }
