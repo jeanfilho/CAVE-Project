@@ -21,6 +21,9 @@
     <ClInclude Include="..\sources\GameObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\Monkey.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Documents\GitProjects\CAVE-Project\student_project\CMakeLists.txt" />

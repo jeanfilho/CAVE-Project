@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenSG/OSGComponentTransform.h>
+#include <OpenSG/OSGMaterialGroup.h>
 
 OSG_USING_NAMESPACE
 
@@ -11,11 +12,36 @@ private:
 	NodeRecPtr transform;
 
 public:
+	GameObject(){}
+
 	GameObject(ComponentTransformRecPtr transform, NodeRecPtr geometry)
 	{
 		this->transform = makeNodeFor(transform);
 		this->transform->addChild(geometry);
 	}
+	GameObject(NodeRecPtr geometry)
+	{
+		ComponentTransformRecPtr transform = ComponentTransform::create();
+		transform->setTranslation(Vec3f(0,0,0));
+		this->transform = makeNodeFor(transform);
+		this->transform->addChild(geometry);
+	}
+	GameObject(Vec3f position, NodeRecPtr geometry)
+	{
+		ComponentTransformRecPtr transform =  ComponentTransform::create();
+		transform->setTranslation(position);
+		this->transform = makeNodeFor(transform);
+		this->transform->addChild(geometry);
+	}
+	GameObject(Vec3f position, Quaternion rotation, NodeRecPtr geometry)
+	{
+		ComponentTransformRecPtr transform =  ComponentTransform::create();
+		transform->setRotation(rotation);
+		transform->setTranslation(position);
+		this->transform = makeNodeFor(transform);
+		this->transform->addChild(geometry);
+	}
+
 	~GameObject(){}
 
 	void setTranslation(Vec3f pos)

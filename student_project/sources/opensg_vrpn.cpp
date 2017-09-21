@@ -33,9 +33,9 @@ vrpn_Analog_Remote* analog = nullptr;
 
 Scene scene = Scene();
 TimeManager timeMgr = TimeManager();
-float horizontalSpeed = 50;
-float verticalSpeed = 50;
-float mouseSensitivity = 2;
+float horizontalSpeed = 20;
+float verticalSpeed = 20;
+float mouseSensitivity = 1;
 float amountToMoveX, amountToMoveZ, amountToMoveY;
 
 bool isMouseWarped;
@@ -189,15 +189,20 @@ void keyboardUp(unsigned char k, int x, int y)
 	{
 		/* Movement stop*/
 		case 'w':
+		case 'W':
 		case 's':
+		case 'S':
 			amountToMoveZ = 0;
 			break;
 		case 'd':
+		case 'D':
 		case 'a':
+		case 'A':
 			amountToMoveX = 0;
 			break;
 		case 32:
 		case 'c':
+		case 'C':
 			amountToMoveY = 0;
 			break;
 		default:
@@ -205,6 +210,25 @@ void keyboardUp(unsigned char k, int x, int y)
 	}
 }
 
+void mouse(int button, int state, int x, int y)
+{
+	switch(button)
+	{
+		case GLUT_LEFT_BUTTON:
+			if(state == GLUT_DOWN)
+			{
+				Quaternion direction = Quaternion(0,0,-1,0);
+				direction = (rotation * direction) * rotation.conj();
+				Vec3f normDirection = Vec3f(direction.x(), direction.y(), direction.z());
+				normDirection.normalize();
+				scene.throwBalloon(mgr->getTranslation(), normDirection);
+			}
+			break;
+		default:
+			break;
+	}
+
+}
 
 void motionPassive(int x, int y)
 {
@@ -255,6 +279,7 @@ void setupGLUT(int *argc, char *argv[])
 	glutPassiveMotionFunc(motionPassive);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
+	glutMouseFunc(mouse);
 	glutIdleFunc([]()
 	{
 		timeMgr.update();
@@ -267,7 +292,7 @@ void setupGLUT(int *argc, char *argv[])
 		/* Keyboard Translation */
 		Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
 		translation = (rotation * translation) * rotation.conj();
-		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x(), translation.y(), translation.z()));
+		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x() * horizontalSpeed, translation.y() * verticalSpeed, translation.z() * horizontalSpeed));
 		
 		/* Update scene */
 		scene.update(timeMgr.deltaTime());
@@ -277,6 +302,51 @@ void setupGLUT(int *argc, char *argv[])
 		// the changelist should be cleared - else things could be copied multiple times
 		OSG::Thread::getCurrentChangeList()->clear();
 	});
+}
+
+void setupBackground(SkyBackgroundRecPtr bg)
+{
+	/* Front */
+	ImageRecPtr img = Image::create();
+	img->read("textures/morning_ft.tga");
+	TextureObjChunkRecPtr tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setFrontTexture(tex);
+
+	/* Back */
+	img = Image::create();
+	img->read("textures/morning_bk.tga");
+	tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setBackTexture(tex);
+
+	/* Left */
+	img = Image::create();
+	img->read("textures/morning_rt.tga");
+	tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setLeftTexture(tex);
+
+	/* Right */
+	img = Image::create();
+	img->read("textures/morning_lf.tga");
+	tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setRightTexture(tex);
+
+	/* Up */
+	img = Image::create();
+	img->read("textures/morning_up.tga");
+	tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setTopTexture(tex);
+
+	/* Back */
+	img = Image::create();
+	img->read("textures/morning_dn.tga");
+	tex = TextureObjChunk::create();
+	tex->setImage(img);
+	bg->setBottomTexture(tex);
 }
 
 int main(int argc, char **argv)
@@ -348,6 +418,10 @@ int main(int argc, char **argv)
 			gameScene = scene.getBase();
 		}
 		commitChanges();
+
+		/* Background */
+		SkyBackgroundRecPtr bg = SkyBackground::create();
+		setupBackground(bg);
 		
 		mgr = new OSGCSM::CAVESceneManager(&cfg);
 		mgr->setWindow(mwin);
@@ -356,7 +430,8 @@ int main(int argc, char **argv)
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
-		mgr->addToTrolley(makeSphere(0,10), 0);
+		mgr->addToTrolley(makeSphere(1,10), 0);
+		mgr->setBackground(0,bg); 
 	}
 	catch(const std::exception& e)
 	{

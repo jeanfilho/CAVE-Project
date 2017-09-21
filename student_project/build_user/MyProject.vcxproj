@@ -100,6 +100,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\sources\Scene.cpp" />
     <ClCompile Include="D:\Documents\GitProjects\CAVE-Project\student_project\sources\opensg_vrpn.cpp" />
     <ClInclude Include="..\sources\GameObject.h" />
+    <ClInclude Include="..\sources\Monkey.h" />
     <ClInclude Include="..\sources\Scene.h" />
     <ClInclude Include="..\sources\TimeManager.h" />
     <ClInclude Include="D:\Documents\GitProjects\CAVE-Project\student_project\config\mono.csm" />
