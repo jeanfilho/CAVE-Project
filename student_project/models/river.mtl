@@ -1,12 +1,3 @@
-# Blender MTL File: 'Mockup.blend'
-# Material Count: 1
-
-newmtl water
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.001544 0.020338 0.480000
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 1
+version https://git-lfs.github.com/spec/v1
+oid sha256:3f306bac5132337f4ee568808c7be9f860faa3095d3e2e2b4de4591e4825bef8
+size 233

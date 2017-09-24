@@ -27,19 +27,26 @@ void Scene::initialize()
 
 	/* Main Directional Light */
 	DirectionalLightRecPtr dirLight1 = DirectionalLight::create();
-	dirLight1->setDirection(.2f,1,.2f);
+	dirLight1->setDirection(-.5f,1,.5f);
 	dirLight1->setDiffuse(Color4f(1,1,1,1));
-	dirLight1->setAmbient(Color4f(-.2f,-.2f,-.2f,1));
-	dirLight1->setSpecular(Color4f(0,0,0,0));	
+	dirLight1->setAmbient(Color4f(.5,.5,.5,1));
+	dirLight1->setSpecular(Color4f(.1f,.1f,.1f,0.2f));	
 	dirLight1->setBeacon(world);
 
-	/* Secondary Directional Light */
-	/*DirectionalLightRecPtr dirLight2 = DirectionalLight::create();
-	dirLight2->setDirection(-.2f,-1,-.2f);
-	dirLight2->setDiffuse(Color4f(.2,.2,.2,1));
-	dirLight2->setAmbient(Color4f(.2f,.2f,.2f,.2f));
-	dirLight2->setSpecular(Color4f(1,1,1,0));	
-	dirLight2->setBeacon(world);*/
+	/* Create material group for custom shader */
+	ChunkMaterialRecPtr cmat = ChunkMaterial::create();
+	TextureObjChunkRecPtr tex = TextureObjChunk::create();
+	ImageRecPtr img = Image::create();
+	img->read("models/Wood.png");
+	tex->setImage(img);
+	cmat->addChunk(tex);
+	SimpleSHLChunkRecPtr shl = SimpleSHLChunk::create();
+	MaterialGroupRecPtr materialGroup = MaterialGroup::create();	
+	cmat->addChunk(shl);
+	shl->setVertexProgram(_vertex_shader);
+	shl->setFragmentProgram(_fragment_shader);
+	materialGroup->setMaterial(cmat);
+	NodeRecPtr shader = makeNodeFor(materialGroup);
 
 	/* Load river sections */
 	NodeRecPtr river = SceneFileHandler::the()->read("models/river.obj");
@@ -47,10 +54,11 @@ void Scene::initialize()
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, 0, -i * riverLength));
-		GameObject riverSection = GameObject(trans, OSG::deepCloneTree(river));
+		GameObject riverSection = GameObject(trans, OSG::cloneTree(river));
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
+	
 
 	/* Load boat */
 	boat = GameObject(SceneFileHandler::the()->read("models/boat.obj"));
@@ -70,13 +78,11 @@ void Scene::initialize()
 		monkeys[i].setTranslation(Vec3f(-50, 100, -50));
 		world->addChild(monkeys[i].getNode());
 	}
-
+		
+	/* Build tree */
 	base = makeNodeFor(dirLight1);
-	/*NodeRecPtr subBase = makeNodeFor(dirLight2);
-	base->addChild(subBase);
-	subBase->addChild(world);*/
-	base->addChild(world);
-
+	base->addChild(shader);
+	shader->addChild(world);
 }
 
 void Scene::update(float deltaTime)

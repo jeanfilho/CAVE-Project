@@ -15,7 +15,13 @@
 #include <OpenSG\OSGSkyBackground.h>
 #include <OpenSG\OSGImage.h>
 #include <OpenSG\OSGTextureObjChunk.h>
+#include <OpenSG\OSGMaterialGroup.h>
+#include <OpenSG\OSGChunkMaterial.h>
+#include <OpenSG\OSGSimpleSHLChunk.h>
+#include <OpenSG\OSGImage.h>
 
+
+#include "..\shader\Shader.h"
 #include "GameObject.h"
 #include "Monkey.h"
 
