@@ -33,37 +33,46 @@ void Scene::initialize()
 	dirLight1->setSpecular(Color4f(.1f,.1f,.1f,0.2f));	
 	dirLight1->setBeacon(world);
 
-	/* Create material group for custom shader */
+	/* Create chunk material base for custom shaders */
 	ChunkMaterialRecPtr cmat = ChunkMaterial::create();
 	TextureObjChunkRecPtr tex = TextureObjChunk::create();
 	ImageRecPtr img = Image::create();
-	img->read("models/Wood.png");
 	tex->setImage(img);
 	cmat->addChunk(tex);
-	SimpleSHLChunkRecPtr shl = SimpleSHLChunk::create();
-	MaterialGroupRecPtr materialGroup = MaterialGroup::create();	
-	cmat->addChunk(shl);
-	shl->setVertexProgram(_vertex_shader);
-	shl->setFragmentProgram(_fragment_shader);
+	MaterialGroupRecPtr materialGroup = MaterialGroup::create();
 	materialGroup->setMaterial(cmat);
-	NodeRecPtr shader = makeNodeFor(materialGroup);
+	NodeRecPtr materialBase = makeNodeFor(materialGroup);
+	
+	/* Load boat */
+	img->read("models/Wood.png");
+	NodeRecPtr boatMat = OSG::deepCloneTree(materialBase);
+	boatSHL = SimpleSHLChunk::create();
+	boatSHL->setFragmentProgram(_fragment_shader);
+	boatSHL->setVertexProgram(_vertex_shader);
+	boatSHL->addUniformVariable("ViewMatrix", Matrix4f());
+	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(boatMat->getCore())->getMaterial())->addChunk(boatSHL);
+	boatMat->addChild(SceneFileHandler::the()->read("models/boat.obj"));
+	boat = GameObject(boatMat);
+	world->addChild(boat.getNode());
 
 	/* Load river sections */
-	NodeRecPtr river = SceneFileHandler::the()->read("models/river.obj");
+	img->read("models/Water.png");
+	NodeRecPtr riverMat = OSG::deepCloneTree(materialBase);
+	riverSHL = SimpleSHLChunk::create();
+	riverSHL->setFragmentProgram(_fragment_shader);
+	riverSHL->setVertexProgram(_water_vertex_shader);
+	riverSHL->addUniformVariable("ViewMatrix", Matrix4f());
+	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(riverMat->getCore())->getMaterial())->addChunk(riverSHL);
+	riverMat->addChild(SceneFileHandler::the()->read("models/river.obj"));
 	for(int i = 0; i < 4; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, 0, -i * riverLength));
-		GameObject riverSection = GameObject(trans, OSG::cloneTree(river));
+		GameObject riverSection = GameObject(trans, OSG::cloneTree(riverMat));
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
 	
-
-	/* Load boat */
-	boat = GameObject(SceneFileHandler::the()->read("models/boat.obj"));
-	world->addChild(boat.getNode());
-
 	/* Load balloon */
 	//TODO proper model
 	waterBalloon = GameObject(makeSphere(2, balloonRadius));
@@ -81,12 +90,13 @@ void Scene::initialize()
 		
 	/* Build tree */
 	base = makeNodeFor(dirLight1);
-	base->addChild(shader);
-	shader->addChild(world);
+	base->addChild(world);
 }
 
-void Scene::update(float deltaTime)
+void Scene::update(float deltaTime, Matrix4f viewMatrix)
 {
+	boatSHL->updateUniformVariable("ViewMatrix", viewMatrix);
+	riverSHL->updateUniformVariable("ViewMatrix", viewMatrix);
 	animateScenery(deltaTime);
 	animateMonkeys(deltaTime);
 	animateBalloon(deltaTime);

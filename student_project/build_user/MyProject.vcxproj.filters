@@ -24,7 +24,7 @@
     <ClInclude Include="..\sources\Monkey.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shader\TinyWorld.h">
+    <ClInclude Include="..\shader\Shaders.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

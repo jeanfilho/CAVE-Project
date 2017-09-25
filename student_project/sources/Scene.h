@@ -2,16 +2,16 @@
 
 #include <vector>
 
-#include <OpenSG/OSGGLUT.h>
-#include <OpenSG/OSGConfig.h>
-#include <OpenSG/OSGSimpleGeometry.h>
-#include <OpenSG/OSGGLUTWindow.h>
-#include <OpenSG/OSGMultiDisplayWindow.h>
-#include <OpenSG/OSGSceneFileHandler.h>
-#include <OpenSG/OSGDirectionalLight.h>
-#include <OpenSG/OSGComponentTransform.h>
-#include <OpenSG/OSGSimpleMaterial.h>
-#include <OpenSG/OSGMaterialGroup.h>
+#include <OpenSG\OSGGLUT.h>
+#include <OpenSG\OSGConfig.h>
+#include <OpenSG\OSGSimpleGeometry.h>
+#include <OpenSG\OSGGLUTWindow.h>
+#include <OpenSG\OSGMultiDisplayWindow.h>
+#include <OpenSG\OSGSceneFileHandler.h>
+#include <OpenSG\OSGDirectionalLight.h>
+#include <OpenSG\OSGComponentTransform.h>
+#include <OpenSG\OSGSimpleMaterial.h>
+#include <OpenSG\OSGMaterialGroup.h>
 #include <OpenSG\OSGSkyBackground.h>
 #include <OpenSG\OSGImage.h>
 #include <OpenSG\OSGTextureObjChunk.h>
@@ -20,8 +20,7 @@
 #include <OpenSG\OSGSimpleSHLChunk.h>
 #include <OpenSG\OSGImage.h>
 
-
-#include "..\shader\Shader.h"
+#include "..\shader\Shaders.h"
 #include "GameObject.h"
 #include "Monkey.h"
 
@@ -32,6 +31,8 @@ class Scene
 private:
 	NodeRecPtr base;	
 	GameObject boat;
+	SimpleSHLChunkRecPtr boatSHL;
+	SimpleSHLChunkRecPtr riverSHL;
 		
 	std::vector<GameObject> riverSections;
 	float riverLength;
@@ -57,7 +58,7 @@ public:
 	~Scene();
 
 	void initialize();
-	void update(float deltaTime);
+	void update(float deltaTime, Matrix4f viewMatrix);
 	void moveNavSphere(Vec3f pos);
 	void throwBalloon(Vec3f position, Vec3f direction);
 	NodeTransitPtr getBase();

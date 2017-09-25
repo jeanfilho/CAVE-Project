@@ -99,7 +99,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="..\sources\Scene.cpp" />
     <ClCompile Include="D:\Documents\GitProjects\CAVE-Project\student_project\sources\opensg_vrpn.cpp" />
-    <ClInclude Include="..\shader\TinyWorld.h" />
+    <ClInclude Include="..\shader\Shaders.h" />
     <ClInclude Include="..\sources\GameObject.h" />
     <ClInclude Include="..\sources\Monkey.h" />
     <ClInclude Include="..\sources\Scene.h" />

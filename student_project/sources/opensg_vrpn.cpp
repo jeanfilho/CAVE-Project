@@ -41,11 +41,6 @@ float amountToMoveX, amountToMoveZ, amountToMoveY;
 bool isMouseWarped;
 Quaternion rotation;
 
-void updateTime()
-{
-
-}
-
 void cleanup()
 {
 	delete mgr;
@@ -293,9 +288,21 @@ void setupGLUT(int *argc, char *argv[])
 		Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
 		translation = (rotation * translation) * rotation.conj();
 		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x() * horizontalSpeed, translation.y() * verticalSpeed, translation.z() * horizontalSpeed));
+
+		Vec3f pos = mgr->getTranslation();
+		Vec3f up = Vec3f(0,1,0);
+		Vec3f right = Vec3f(1,0,0);
+		Vec3f fwd = Vec3f(0,0,1);
+		mgr->getYRotate();
 		
 		/* Update scene */
-		scene.update(timeMgr.deltaTime());
+		Matrix4f viewMatrix = Matrix4f();
+		viewMatrix.setTranslate(-mgr->getTranslation());
+		viewMatrix.setRotate(Quaternion(Vec3f(0,1,0), mgr->getYRotate()));
+		viewMatrix.invert();
+
+		std::cout << viewMatrix << std::endl << std::endl;
+		scene.update(timeMgr.deltaTime(), viewMatrix);
 
 		commitChanges();
 		mgr->redraw();
