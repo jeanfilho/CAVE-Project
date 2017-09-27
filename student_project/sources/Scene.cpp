@@ -37,7 +37,6 @@ void Scene::initialize()
 	ChunkMaterialRecPtr cmat = ChunkMaterial::create();
 	TextureObjChunkRecPtr tex = TextureObjChunk::create();
 	ImageRecPtr img = Image::create();
-	img->setMipMapCount(0);
 	tex->setImage(img);
 	cmat->addChunk(tex);
 	MaterialGroupRecPtr materialGroup = MaterialGroup::create();
@@ -69,6 +68,10 @@ void Scene::initialize()
 
 	/* Load jungle mesh */
 	img->read("models/Scenery.png");
+	img->setMipMapCount(0);
+	img->removeMipmap();
+	tex->setMinFilter(GL_LINEAR);
+	tex->setMagFilter(GL_LINEAR);
 	NodeRecPtr sceneryMat = OSG::deepCloneTree(materialBase);
 	scenerySHL = SimpleSHLChunk::create();
 	scenerySHL->setFragmentProgram(_fragment_shader);
