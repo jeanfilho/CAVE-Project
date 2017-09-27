@@ -67,4 +67,9 @@ public:
 	{
 		return transform;
 	}
+
+	void addChild(NodeRecPtr node)
+	{
+		transform->addChild(node);
+	}
 };

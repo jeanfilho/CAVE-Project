@@ -23,5 +23,10 @@ public:
 	{
 		return _deltaTime;
 	}
+
+	static float elapsedTime()
+	{
+		return glutGet(GLUT_ELAPSED_TIME)/1000.0f;
+	}
 };
 

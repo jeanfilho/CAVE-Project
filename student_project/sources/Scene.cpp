@@ -37,6 +37,7 @@ void Scene::initialize()
 	ChunkMaterialRecPtr cmat = ChunkMaterial::create();
 	TextureObjChunkRecPtr tex = TextureObjChunk::create();
 	ImageRecPtr img = Image::create();
+	img->setMipMapCount(0);
 	tex->setImage(img);
 	cmat->addChunk(tex);
 	MaterialGroupRecPtr materialGroup = MaterialGroup::create();
@@ -62,13 +63,26 @@ void Scene::initialize()
 	riverSHL->setFragmentProgram(_fragment_shader);
 	riverSHL->setVertexProgram(_water_vertex_shader);
 	riverSHL->addUniformVariable("ViewMatrix", Matrix4f());
+	riverSHL->addUniformVariable("ElapsedTime", 0.0f);
 	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(riverMat->getCore())->getMaterial())->addChunk(riverSHL);
 	riverMat->addChild(SceneFileHandler::the()->read("models/river.obj"));
-	for(int i = 0; i < 4; i++)
+
+	/* Load jungle mesh */
+	img->read("models/Scenery.png");
+	NodeRecPtr sceneryMat = OSG::deepCloneTree(materialBase);
+	scenerySHL = SimpleSHLChunk::create();
+	scenerySHL->setFragmentProgram(_fragment_shader);
+	scenerySHL->setVertexProgram(_vertex_shader);
+	scenerySHL->addUniformVariable("ViewMatrix", Matrix4f());
+	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(sceneryMat->getCore())->getMaterial())->addChunk(scenerySHL);
+	sceneryMat->addChild(SceneFileHandler::the()->read("models/scenery.obj"));
+	for(int i = 0; i < 6; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
-		trans->setTranslation(Vec3f(0, 0, -i * riverLength));
+		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
 		GameObject riverSection = GameObject(trans, OSG::cloneTree(riverMat));
+		riverSection.addChild(OSG::cloneTree(sceneryMat));
+		riverSection.addChild(OSG::cloneTree(sceneryMat));
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
@@ -96,7 +110,9 @@ void Scene::initialize()
 void Scene::update(float deltaTime, Matrix4f viewMatrix)
 {
 	boatSHL->updateUniformVariable("ViewMatrix", viewMatrix);
+	scenerySHL->updateUniformVariable("ViewMatrix", viewMatrix);
 	riverSHL->updateUniformVariable("ViewMatrix", viewMatrix);
+	riverSHL->updateUniformVariable("ElapsedTime", TimeManager::elapsedTime());
 	animateScenery(deltaTime);
 	animateMonkeys(deltaTime);
 	animateBalloon(deltaTime);

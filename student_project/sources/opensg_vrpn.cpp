@@ -300,8 +300,6 @@ void setupGLUT(int *argc, char *argv[])
 		viewMatrix.setTranslate(-mgr->getTranslation());
 		viewMatrix.setRotate(Quaternion(Vec3f(0,1,0), mgr->getYRotate()));
 		viewMatrix.invert();
-
-		std::cout << viewMatrix << std::endl << std::endl;
 		scene.update(timeMgr.deltaTime(), viewMatrix);
 
 		commitChanges();
@@ -315,42 +313,42 @@ void setupBackground(SkyBackgroundRecPtr bg)
 {
 	/* Front */
 	ImageRecPtr img = Image::create();
-	img->read("textures/morning_ft.tga");
+	img->read("textures/Front.2048x2048.png");
 	TextureObjChunkRecPtr tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setFrontTexture(tex);
 
 	/* Back */
 	img = Image::create();
-	img->read("textures/morning_bk.tga");
+	img->read("textures/Back.2048x2048.png");
 	tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setBackTexture(tex);
 
 	/* Left */
 	img = Image::create();
-	img->read("textures/morning_rt.tga");
+	img->read("textures/Right.2048x2048.png");
 	tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setLeftTexture(tex);
 
 	/* Right */
 	img = Image::create();
-	img->read("textures/morning_lf.tga");
+	img->read("textures/Left.2048x2048.png");
 	tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setRightTexture(tex);
 
 	/* Up */
 	img = Image::create();
-	img->read("textures/morning_up.tga");
+	img->read("textures/Up.2048x2048.png");
 	tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setTopTexture(tex);
 
 	/* Back */
 	img = Image::create();
-	img->read("textures/morning_dn.tga");
+	img->read("textures/Down.2048x2048.png");
 	tex = TextureObjChunk::create();
 	tex->setImage(img);
 	bg->setBottomTexture(tex);
@@ -358,7 +356,7 @@ void setupBackground(SkyBackgroundRecPtr bg)
 
 int main(int argc, char **argv)
 {
-#if WIN32
+#if WIN32 
 	OSG::preloadSharedObject("OSGFileIO");
 	OSG::preloadSharedObject("OSGImageFileIO");
 #endif

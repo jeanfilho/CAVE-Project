@@ -23,6 +23,7 @@
 #include "..\shader\Shaders.h"
 #include "GameObject.h"
 #include "Monkey.h"
+#include "TimeManager.h"
 
 OSG_USING_NAMESPACE
 
@@ -33,6 +34,7 @@ private:
 	GameObject boat;
 	SimpleSHLChunkRecPtr boatSHL;
 	SimpleSHLChunkRecPtr riverSHL;
+	SimpleSHLChunkRecPtr scenerySHL;
 		
 	std::vector<GameObject> riverSections;
 	float riverLength;
