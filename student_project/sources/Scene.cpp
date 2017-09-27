@@ -76,7 +76,7 @@ void Scene::initialize()
 	scenerySHL->addUniformVariable("ViewMatrix", Matrix4f());
 	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(sceneryMat->getCore())->getMaterial())->addChunk(scenerySHL);
 	sceneryMat->addChild(SceneFileHandler::the()->read("models/scenery.obj"));
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < 7; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
