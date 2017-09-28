@@ -52,6 +52,7 @@ void Scene::initialize()
 		GameObject riverSection = GameObject(trans, OSG::cloneTree(river.getGeometryNode()), "models/Water.png");
 		riverSection.setMaterialNode(river.getMaterialNode());
 		riverSection.addChild(OSG::cloneTree(scenery.getMaterialNode()));
+		riverSection.setVertexProgram(_water_vertex_shader);
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}

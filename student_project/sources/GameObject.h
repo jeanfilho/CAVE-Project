@@ -120,6 +120,11 @@ public:
 		return geometry;
 	}
 
+	void setGeomtryNode(NodeRecPtr geometryNode)
+	{
+		this->geometry = geometryNode;
+	}
+
 	void addChild(NodeRecPtr node)
 	{
 		transform->addChild(node);
@@ -127,7 +132,7 @@ public:
 
 	void setVertexProgram(std::string program)
 	{
-		shl->setVertexProgram(program.c_str());
+		shl->setVertexProgram(program);
 	}
 
 	template<class ValueT>
