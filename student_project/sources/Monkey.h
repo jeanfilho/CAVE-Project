@@ -12,7 +12,7 @@ public:
 	Vec3f Velocity;
 	bool isHit;
 
-	Monkey(NodeRecPtr geometry, float capsuleRadius, float capsuleHeight) : GameObject(geometry)
+	Monkey(NodeRecPtr geometry, float capsuleRadius, float capsuleHeight, std::string textureImage) : GameObject(geometry, textureImage)
 	{
 		this->capsuleHeight = capsuleHeight;
 		this->capsuleRadius = capsuleRadius;

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|x64">
@@ -48,8 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_OSG_HAVE_CONFIGURED_H_;OSG_WITH_GLUT;OSG_WITH_PNG;OSG_WITH_GIF;OSG_WITH_TIF;OSG_WITH_JPG;ENABLE_CSM_SUPPORT;ENABLE_VRPN_SUPPORT;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat></DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_OSG_HAVE_CONFIGURED_H_;OSG_WITH_GLUT;OSG_WITH_PNG;OSG_WITH_GIF;OSG_WITH_TIF;OSG_WITH_JPG;ENABLE_CSM_SUPPORT;ENABLE_VRPN_SUPPORT;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -72,8 +71,7 @@
       <ImportLibrary>D:/Documents/GitProjects/CAVE-Project/student_project/exe/Release/MyProject.lib</ImportLibrary>
       <ProgramDataBaseFile>D:/Documents/GitProjects/CAVE-Project/student_project/exe/Release/MyProject.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version>
-      </Version>
+      <Version></Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -97,13 +95,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\Scene.cpp" />
-    <ClCompile Include="D:\Documents\GitProjects\CAVE-Project\student_project\sources\opensg_vrpn.cpp" />
-    <ClInclude Include="..\shader\Shaders.h" />
-    <ClInclude Include="..\sources\GameObject.h" />
-    <ClInclude Include="..\sources\Monkey.h" />
-    <ClInclude Include="..\sources\Scene.h" />
-    <ClInclude Include="..\sources\TimeManager.h" />
+    <ClCompile Include="D:\Documents\GitProjects\CAVE-Project\student_project\sources\Scene.cpp"  />
+    <ClCompile Include="D:\Documents\GitProjects\CAVE-Project\student_project\sources\opensg_vrpn.cpp"  />
     <ClInclude Include="D:\Documents\GitProjects\CAVE-Project\student_project\config\mono.csm" />
   </ItemGroup>
   <ItemGroup>
