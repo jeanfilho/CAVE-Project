@@ -297,8 +297,8 @@ void setupGLUT(int *argc, char *argv[])
 		
 		/* Update scene */
 		Matrix4f viewMatrix = Matrix4f();
-		viewMatrix.setTranslate(-mgr->getTranslation());
-		viewMatrix.setRotate(Quaternion(Vec3f(0,1,0), mgr->getYRotate()));
+		viewMatrix.setTranslate(-head_position);
+		viewMatrix.setRotate(head_orientation);
 		viewMatrix.invert();
 		scene.update(timeMgr.deltaTime(), viewMatrix);
 
@@ -435,8 +435,10 @@ int main(int argc, char **argv)
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
-		mgr->addToTrolley(makeSphere(1,10), 0);
-		mgr->setBackground(0,bg); 
+		for(int i = 0; i < cfg.getWalls().size(); i++)
+		{
+			mgr->setBackground(i,bg);
+		}
 	}
 	catch(const std::exception& e)
 	{

@@ -3,3 +3,5 @@ libraries/
 *.opensdf
 
 *.sdf
+
+student_project/build_user/
