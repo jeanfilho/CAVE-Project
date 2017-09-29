@@ -297,7 +297,7 @@ void setupGLUT(int *argc, char *argv[])
 		
 		/* Update scene */
 		Matrix4f viewMatrix = Matrix4f();
-		viewMatrix.setTranslate(-head_position);
+		viewMatrix.setTranslate(head_position);
 		viewMatrix.setRotate(head_orientation);
 		viewMatrix.invert();
 		scene.update(timeMgr.deltaTime(), viewMatrix);
