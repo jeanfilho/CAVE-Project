@@ -86,6 +86,13 @@ void VRPN_CALLBACK callback_button(void* userData, const vrpn_BUTTONCB button)
 {
 	if (button.button == 0 && button.state == 1)
 		print_tracker();
+	else if(button.button == 3 && button.state == 1)
+	{	
+		Quaternion direction = Quaternion(0,0,-1,0);
+		direction = (wand_orientation * direction) * wand_orientation.conj();
+		Vec3f normDirection = Vec3f(direction.x(), direction.y(), direction.z());
+		scene.throwBalloon(wand_position, normDirection);
+	}
 }
 
 void InitTracker(OSGCSM::CAVEConfig &cfg)
@@ -274,7 +281,8 @@ void setupGLUT(int *argc, char *argv[])
 	glutPassiveMotionFunc(motionPassive);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
-	glutMouseFunc(mouse);
+	if(cfg.getWalls().size() <= 1)
+		glutMouseFunc(mouse);
 	glutIdleFunc([]()
 	{
 		timeMgr.update();
@@ -282,19 +290,15 @@ void setupGLUT(int *argc, char *argv[])
 		check_tracker();
 		const auto speed = 1.f;
 		mgr->setUserTransform(head_position, head_orientation);
-		mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
+		//mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
 		
 		/* Keyboard Translation */
-		Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
-		translation = (rotation * translation) * rotation.conj();
-		mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x() * horizontalSpeed, translation.y() * verticalSpeed, translation.z() * horizontalSpeed));
-
-		Vec3f pos = mgr->getTranslation();
-		Vec3f up = Vec3f(0,1,0);
-		Vec3f right = Vec3f(1,0,0);
-		Vec3f fwd = Vec3f(0,0,1);
-		mgr->getYRotate();
-		
+		if(cfg.getWalls().size() <= 1)
+		{
+			Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
+			translation = (rotation * translation) * rotation.conj();
+			mgr->setTranslation(mgr->getTranslation() + Vec3f(translation.x() * horizontalSpeed, translation.y() * verticalSpeed, translation.z() * horizontalSpeed));
+		}
 		/* Update scene */
 		Matrix4f viewMatrix = Matrix4f();
 		viewMatrix.setTranslate(head_position);
