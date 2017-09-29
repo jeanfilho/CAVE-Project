@@ -356,10 +356,10 @@ void setupBackground(SkyBackgroundRecPtr bg)
 
 int main(int argc, char **argv)
 {
-#if WIN32 
+
 	OSG::preloadSharedObject("OSGFileIO");
 	OSG::preloadSharedObject("OSGImageFileIO");
-#endif
+
 	try
 	{
 		bool cfgIsSet = false;

@@ -1,0 +1,3 @@
+/home/ga46puh/CAVE-project/student_project/build/CMakeFiles/edit_cache.dir
+/home/ga46puh/CAVE-project/student_project/build/CMakeFiles/rebuild_cache.dir
+/home/ga46puh/CAVE-project/student_project/build/CMakeFiles/MyProject.dir

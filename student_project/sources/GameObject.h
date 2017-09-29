@@ -1,7 +1,7 @@
 #pragma once
 
 #include <OpenSG/OSGComponentTransform.h>
-#include <OpenSG\OSGChunkMaterial.h>
+#include <OpenSG/OSGChunkMaterial.h>
 
 OSG_USING_NAMESPACE
 
