@@ -84,9 +84,9 @@ void VRPN_CALLBACK callback_analog(void* userData, const vrpn_ANALOGCB analog)
 
 void VRPN_CALLBACK callback_button(void* userData, const vrpn_BUTTONCB button)
 {
-	if (button.button == 0 && button.state == 1)
+	if (button.button == 3 && button.state == 1)
 		print_tracker();
-	else if(button.button == 3 && button.state == 1)
+	else if(button.button == 0 && button.state == 1)
 	{	
 		Quaternion direction = Quaternion(0,0,-1,0);
 		direction = (wand_orientation * direction) * wand_orientation.conj();
