@@ -9,7 +9,7 @@ Scene::Scene()
 	isCoconutActive = false;
 	coconutRadius = 7.5f;
 
-	gravity = 9.8f * 100; /* cm/s² */
+	gravity = 9.8f * 100; /* cm/S² */
 
 	riverLength = 1000;
 	boatSpeed = 100;
@@ -40,35 +40,33 @@ void Scene::initialize()
 
 	/* Load river sections */
 	river = GameObject(SceneFileHandler::the()->read("models/river.obj"), "models/Water.png");
-	river.addUniformVariable("ElapsedTime", 0.0f);
 	river.setVertexProgram(_water_vertex_shader);
 
 	/* Load jungle mesh */
-	scenery = GameObject(SceneFileHandler::the()->read("models/scenery.obj"), "models/Scenery.png");
+	scenery = GameObject(SceneFileHandler::the()->read("models/Scenery.obj"), "models/Scenery.png");
 	for(int i = 0; i < 7; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
-		GameObject riverSection = GameObject(trans, OSG::cloneTree(river.getGeometryNode()), "models/Water.png");
-		riverSection.setMaterialNode(OSG::cloneTree(river.getMaterialNode()));
-		riverSection.addChild(OSG::cloneTree(scenery.getMaterialNode()));
+		GameObject riverSection = GameObject(trans, OSG::cloneTree(river.getMaterialNode()));
+		GameObject scenerySection = GameObject(OSG::cloneTree(scenery.getMaterialNode()));
+		riverSection.addChild(scenerySection.getNode());
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
 	
 	/* Load Coconut */
-	coconut = GameObject(SceneFileHandler::the()->read("models/coconut.obj"), "models/coconut.png");
+	coconut = GameObject(SceneFileHandler::the()->read("models/coconut.obj"), "models/Coconut.png");
 	coconut.setTranslation(Vec3f(0,10,200));
 	world->addChild(coconut.getNode());
 
 	/* Load monkey */
 	float monkeyCapsuleHeight = 50;
 	float monkeyCapsuleRadius = 10;
-	monkeys.push_back(Monkey(makeBox(monkeyCapsuleRadius * 2,monkeyCapsuleHeight, monkeyCapsuleRadius * 2, 1, 1, 1), monkeyCapsuleRadius, monkeyCapsuleHeight, "models/coconut.png"));
 	for(int i = 0; i < monkeys.size(); i++)
 	{
+		monkeys.push_back(Monkey(makeBox(monkeyCapsuleRadius * 2,monkeyCapsuleHeight, monkeyCapsuleRadius * 2, 1, 1, 1), monkeyCapsuleRadius, monkeyCapsuleHeight, "models/coconut.png"));
 		monkeys[i].setTranslation(Vec3f(-50, 100, -50));
-		monkeys[i].setMaterialNode(monkeys[0].getMaterialNode());
 		world->addChild(monkeys[i].getNode());
 	}
 		
@@ -82,7 +80,6 @@ void Scene::update(float deltaTime, Matrix4f viewMatrix)
 	boat.updateUniformVariable("ViewMatrix", viewMatrix);
 	scenery.updateUniformVariable("ViewMatrix", viewMatrix);
 	river.updateUniformVariable("ViewMatrix", viewMatrix);
-	river.updateUniformVariable("ElapsedTime", TimeManager::elapsedTime());
 	coconut.updateUniformVariable("ViewMatrix", viewMatrix);
 	animateScenery(deltaTime);
 	animateMonkeys(deltaTime);

@@ -91,7 +91,7 @@ void VRPN_CALLBACK callback_button(void* userData, const vrpn_BUTTONCB button)
 		Quaternion direction = Quaternion(0,0,-1,0);
 		direction = (wand_orientation * direction) * wand_orientation.conj();
 		Vec3f normDirection = Vec3f(direction.x(), direction.y(), direction.z());
-		scene.throwBalloon(wand_position, normDirection);
+		scene.throwCoconut(wand_position, normDirection);
 	}
 }
 
@@ -281,7 +281,7 @@ void setupGLUT(int *argc, char *argv[])
 	glutPassiveMotionFunc(motionPassive);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
-	if(cfg.getWalls().size() <= 1)
+	if(cfg.getNumActiveWalls() <= 1)
 		glutMouseFunc(mouse);
 	glutIdleFunc([]()
 	{
@@ -293,7 +293,7 @@ void setupGLUT(int *argc, char *argv[])
 		//mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
 		
 		/* Keyboard Translation */
-		if(cfg.getWalls().size() <= 1)
+		if(cfg.getNumActiveWalls() <= 1)
 		{
 			Quaternion translation = Quaternion(amountToMoveX, amountToMoveY, amountToMoveZ, 0);
 			translation = (rotation * translation) * rotation.conj();
@@ -301,8 +301,8 @@ void setupGLUT(int *argc, char *argv[])
 		}
 		/* Update scene */
 		Matrix4f viewMatrix = Matrix4f();
-		viewMatrix.setTranslate(head_position);
-		viewMatrix.setRotate(head_orientation);
+		viewMatrix.setTranslate(head_position + mgr->getTranslation());
+		viewMatrix.setRotate(rotation * head_orientation);
 		viewMatrix.invert();
 		scene.update(timeMgr.deltaTime(), viewMatrix);
 
@@ -439,7 +439,7 @@ int main(int argc, char **argv)
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
-		for(int i = 0; i < cfg.getWalls().size(); i++)
+		for(int i = 0; i < cfg.getNumActiveWalls(); i++)
 		{
 			mgr->setBackground(i,bg);
 		}

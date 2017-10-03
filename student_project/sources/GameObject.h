@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <OpenSG/OSGComponentTransform.h>
+#include <OpenSG\OSGComponentTransform.h>
 #include <OpenSG\OSGChunkMaterial.h>
 #include <OpenSG\OSGTextureObjChunk.h>
 #include <OpenSG\OSGMaterialGroup.h>
@@ -24,6 +24,13 @@ private:
 	TextureObjChunkRecPtr tex;
 	MaterialGroupRecPtr material;
 
+	void init(ComponentTransformRecPtr transform, NodeRecPtr material)
+	{
+		this->transform = makeNodeFor(transform);		
+		materialNode = material;
+		this->transform->addChild(materialNode);
+	}
+
 	void init(ComponentTransformRecPtr transform, NodeRecPtr geometry, std::string textureImage)
 	{
 		this->transform = makeNodeFor(transform);
@@ -43,8 +50,8 @@ private:
 		tex->setImage(img);
 		tex->setMinFilter(GL_LINEAR);
 		tex->setMagFilter(GL_LINEAR);
-		cmat->addChunk(tex);
 		cmat->addChunk(shl);
+		cmat->addChunk(tex);
 		
 		material->setMaterial(cmat);
 		materialNode = makeNodeFor(this->material);
@@ -55,6 +62,11 @@ private:
 public:
 	GameObject(){}
 
+	GameObject(ComponentTransformRecPtr transform, NodeRecPtr material)
+	{
+		init(transform, material);
+	}
+
 	GameObject(ComponentTransformRecPtr transform, NodeRecPtr geometry, std::string textureImage)
 	{
 		init(transform, geometry, textureImage);
@@ -64,6 +76,13 @@ public:
 		ComponentTransformRecPtr transform = ComponentTransform::create();
 		transform->setTranslation(Vec3f(0,0,0));
 		init(transform, geometry, textureImage);
+	}
+
+	GameObject(NodeRecPtr material)
+	{
+		ComponentTransformRecPtr transform = ComponentTransform::create();
+		transform->setTranslation(Vec3f(0,0,0));
+		init(transform, material);
 	}
 	GameObject(Vec3f position, NodeRecPtr geometry, std::string textureImage)
 	{
@@ -110,17 +129,12 @@ public:
 		return materialNode;
 	}
 
-	void setMaterialNode(NodeRecPtr materialNode)
-	{
-		this->materialNode = materialNode;
-	}
-
 	NodeRecPtr getGeometryNode()
 	{
 		return geometry;
 	}
 
-	void setGeomtryNode(NodeRecPtr geometryNode)
+	void setGeometryNode(NodeRecPtr geometryNode)
 	{
 		this->geometry = geometryNode;
 	}
@@ -155,5 +169,8 @@ public:
 	void setSHLChunk(SimpleSHLChunkRecPtr shl)
 	{
 		this->shl = shl;
+		this->cmat->clearChunks();
+		this->cmat->addChunk(tex);
+		this->cmat->addChunk(shl);
 	}
 };

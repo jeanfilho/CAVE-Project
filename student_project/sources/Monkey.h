@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenSG/OSGComponentTransform.h>
+#include <OpenSG\OSGComponentTransform.h>
 #include "GameObject.h"
 
 class Monkey : public GameObject
