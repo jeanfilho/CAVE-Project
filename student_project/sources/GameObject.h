@@ -146,4 +146,14 @@ public:
 	{
 		shl->updateUniformVariable(name.c_str(), value);
 	}
+
+	SimpleSHLChunkRecPtr getSHLChunk()
+	{
+		return shl;
+	}
+
+	void setSHLChunk(SimpleSHLChunkRecPtr shl)
+	{
+		this->shl = shl;
+	}
 };

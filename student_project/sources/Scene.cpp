@@ -50,9 +50,8 @@ void Scene::initialize()
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
 		GameObject riverSection = GameObject(trans, OSG::cloneTree(river.getGeometryNode()), "models/Water.png");
-		riverSection.setMaterialNode(river.getMaterialNode());
+		riverSection.setMaterialNode(OSG::cloneTree(river.getMaterialNode()));
 		riverSection.addChild(OSG::cloneTree(scenery.getMaterialNode()));
-		riverSection.setVertexProgram(_water_vertex_shader);
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
