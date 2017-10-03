@@ -301,8 +301,10 @@ void setupGLUT(int *argc, char *argv[])
 		}
 		/* Update scene */
 		Matrix4f viewMatrix = Matrix4f();
-		viewMatrix.setTranslate(head_position + mgr->getTranslation());
-		viewMatrix.setRotate(rotation * head_orientation);
+		Quaternion rel_head_position = Quaternion(head_position.x(), head_position.y(), head_position.z(), 0);
+		rel_head_position = (rotation * rel_head_position) * rotation.conj();
+		viewMatrix.setTranslate(Vec3f(rel_head_position.x(), rel_head_position.y(), rel_head_position.z()) * head_position.length() + mgr->getTranslation());
+		viewMatrix.setRotate(head_orientation * rotation);
 		viewMatrix.invert();
 		scene.update(timeMgr.deltaTime(), viewMatrix);
 
