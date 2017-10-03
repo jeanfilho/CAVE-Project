@@ -5,9 +5,9 @@ Scene::Scene()
 	riverSections = std::vector<GameObject>();
 	monkeys = std::vector<Monkey>();
 
-	balloonSpeed = 1000;
-	isBalloonActive = false;
-	balloonRadius = 10;
+	coconutSpeed = 1000;
+	isCoconutActive = false;
+	coconutRadius = 7.5f;
 
 	gravity = 9.8f * 100; /* cm/s² */
 
@@ -33,72 +33,42 @@ void Scene::initialize()
 	dirLight1->setSpecular(Color4f(.1f,.1f,.1f,0.2f));	
 	dirLight1->setBeacon(world);
 
-	/* Create chunk material base for custom shaders */
-	ChunkMaterialRecPtr cmat = ChunkMaterial::create();
-	TextureObjChunkRecPtr tex = TextureObjChunk::create();
-	ImageRecPtr img = Image::create();
-	img->setMipMapCount(0);
-	tex->setImage(img);
-	cmat->addChunk(tex);
-	MaterialGroupRecPtr materialGroup = MaterialGroup::create();
-	materialGroup->setMaterial(cmat);
-	NodeRecPtr materialBase = makeNodeFor(materialGroup);
 	
 	/* Load boat */
-	img->read("models/Wood.png");
-	NodeRecPtr boatMat = OSG::deepCloneTree(materialBase);
-	boatSHL = SimpleSHLChunk::create();
-	boatSHL->setFragmentProgram(_fragment_shader);
-	boatSHL->setVertexProgram(_vertex_shader);
-	boatSHL->addUniformVariable("ViewMatrix", Matrix4f());
-	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(boatMat->getCore())->getMaterial())->addChunk(boatSHL);
-	boatMat->addChild(SceneFileHandler::the()->read("models/boat.obj"));
-	boat = GameObject(boatMat);
+	boat = GameObject(SceneFileHandler::the()->read("models/boat.obj"), "models/Wood.png");
 	world->addChild(boat.getNode());
 
 	/* Load river sections */
-	img->read("models/Water.png");
-	NodeRecPtr riverMat = OSG::deepCloneTree(materialBase);
-	riverSHL = SimpleSHLChunk::create();
-	riverSHL->setFragmentProgram(_fragment_shader);
-	riverSHL->setVertexProgram(_water_vertex_shader);
-	riverSHL->addUniformVariable("ViewMatrix", Matrix4f());
-	riverSHL->addUniformVariable("ElapsedTime", 0.0f);
-	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(riverMat->getCore())->getMaterial())->addChunk(riverSHL);
-	riverMat->addChild(SceneFileHandler::the()->read("models/river.obj"));
+	river = GameObject(SceneFileHandler::the()->read("models/river.obj"), "models/Water.png");
+	river.addUniformVariable("ElapsedTime", 0.0f);
+	river.setVertexProgram(_water_vertex_shader);
 
 	/* Load jungle mesh */
-	img->read("models/Scenery.png");
-	NodeRecPtr sceneryMat = OSG::deepCloneTree(materialBase);
-	scenerySHL = SimpleSHLChunk::create();
-	scenerySHL->setFragmentProgram(_fragment_shader);
-	scenerySHL->setVertexProgram(_vertex_shader);
-	scenerySHL->addUniformVariable("ViewMatrix", Matrix4f());
-	dynamic_cast<ChunkMaterial*>(dynamic_cast<MaterialGroup*>(sceneryMat->getCore())->getMaterial())->addChunk(scenerySHL);
-	sceneryMat->addChild(SceneFileHandler::the()->read("models/scenery.obj"));
+	scenery = GameObject(SceneFileHandler::the()->read("models/scenery.obj"), "models/Scenery.png");
 	for(int i = 0; i < 7; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
-		GameObject riverSection = GameObject(trans, OSG::cloneTree(riverMat));
-		riverSection.addChild(OSG::cloneTree(sceneryMat));
-		riverSection.addChild(OSG::cloneTree(sceneryMat));
+		GameObject riverSection = GameObject(trans, OSG::cloneTree(river.getGeometryNode()), "models/Water.png");
+		riverSection.setMaterialNode(OSG::cloneTree(river.getMaterialNode()));
+		riverSection.addChild(OSG::cloneTree(scenery.getMaterialNode()));
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
 	
-	/* Load balloon */
-	//TODO proper model
-	waterBalloon = GameObject(makeSphere(2, balloonRadius));
-	world->addChild(waterBalloon.getNode());
+	/* Load Coconut */
+	coconut = GameObject(SceneFileHandler::the()->read("models/coconut.obj"), "models/coconut.png");
+	coconut.setTranslation(Vec3f(0,10,200));
+	world->addChild(coconut.getNode());
 
 	/* Load monkey */
 	float monkeyCapsuleHeight = 50;
 	float monkeyCapsuleRadius = 10;
-	monkeys.push_back(Monkey(makeBox(monkeyCapsuleRadius * 2,monkeyCapsuleHeight, monkeyCapsuleRadius * 2, 1, 1, 1), monkeyCapsuleRadius, monkeyCapsuleHeight));
+	monkeys.push_back(Monkey(makeBox(monkeyCapsuleRadius * 2,monkeyCapsuleHeight, monkeyCapsuleRadius * 2, 1, 1, 1), monkeyCapsuleRadius, monkeyCapsuleHeight, "models/coconut.png"));
 	for(int i = 0; i < monkeys.size(); i++)
 	{
 		monkeys[i].setTranslation(Vec3f(-50, 100, -50));
+		monkeys[i].setMaterialNode(monkeys[0].getMaterialNode());
 		world->addChild(monkeys[i].getNode());
 	}
 		
@@ -109,13 +79,14 @@ void Scene::initialize()
 
 void Scene::update(float deltaTime, Matrix4f viewMatrix)
 {
-	boatSHL->updateUniformVariable("ViewMatrix", viewMatrix);
-	scenerySHL->updateUniformVariable("ViewMatrix", viewMatrix);
-	riverSHL->updateUniformVariable("ViewMatrix", viewMatrix);
-	riverSHL->updateUniformVariable("ElapsedTime", TimeManager::elapsedTime());
+	boat.updateUniformVariable("ViewMatrix", viewMatrix);
+	scenery.updateUniformVariable("ViewMatrix", viewMatrix);
+	river.updateUniformVariable("ViewMatrix", viewMatrix);
+	river.updateUniformVariable("ElapsedTime", TimeManager::elapsedTime());
+	coconut.updateUniformVariable("ViewMatrix", viewMatrix);
 	animateScenery(deltaTime);
 	animateMonkeys(deltaTime);
-	animateBalloon(deltaTime);
+	animateCoconut(deltaTime);
 	checkCollisions(deltaTime);
 }
 
@@ -141,12 +112,12 @@ void Scene::animateMonkeys(float deltaTime)
 	}
 }
 
-void Scene::animateBalloon(float deltaTime)
+void Scene::animateCoconut(float deltaTime)
 {
-	if(isBalloonActive)
+	if(isCoconutActive)
 	{
-		balloonVelocity += Vec3f(0, -gravity * deltaTime, 0);
-		waterBalloon.setTranslation(waterBalloon.getTranslation() + balloonVelocity * deltaTime);
+		coconutVelocity += Vec3f(0, -gravity * deltaTime, 0);
+		coconut.setTranslation(coconut.getTranslation() + coconutVelocity * deltaTime);
 	}	
 }
 
@@ -162,68 +133,68 @@ void Scene::animateScenery(float deltaTime)
 
 void Scene::checkCollisions(float deltaTime)
 {
-	if(!isBalloonActive)
+	if(!isCoconutActive)
 		return;
 
-	/* Test balloon against monkeys - Capsule-Sphere intersection */
+	/* Test coconut against monkeys - Capsule-Sphere intersection */
 	for(int i = 0; i < monkeys.size(); i++)
 	{
-		if(monkeyBalloonIntersection(&monkeys[i]))
+		if(monkeyCoconutIntersection(&monkeys[i]))
 		{
 			std::cout << "Monkey hit!" << std::endl;
-			Vec3f temp = monkeys[i].getTranslation() - waterBalloon.getTranslation(); 
+			Vec3f temp = monkeys[i].getTranslation() - coconut.getTranslation(); 
 			monkeys[i].isHit = true;
 			monkeys[i].Velocity = Vec3f(temp.x(), 5, temp.z());
 			monkeys[i].Velocity.normalize();
-			monkeys[i].Velocity *= balloonSpeed / 2;
+			monkeys[i].Velocity *= coconutSpeed / 2;
 
-			waterBalloon.setTranslation(Vec3f(0,10,200));
-			isBalloonActive = false;
+			coconut.setTranslation(Vec3f(0,10,200));
+			isCoconutActive = false;
 		}
 	}
 
-	/* Test balloon against environment - check if sphere is outside AABB */
-	if(waterBalloon.getTranslation().y() < -balloonRadius)
+	/* Test coconut against environment - check if sphere Y is under 0 */
+	if(coconut.getTranslation().y() < -coconutRadius)
 	{
-		waterBalloon.setTranslation(Vec3f(0,10,200));
-		isBalloonActive = false;
+		coconut.setTranslation(Vec3f(0,10,200));
+		isCoconutActive = false;
 	}
 }
 
-void Scene::throwBalloon(Vec3f position, Vec3f direction)
+void Scene::throwCoconut(Vec3f position, Vec3f direction)
 {
-	if(isBalloonActive)
+	if(isCoconutActive)
 		return;
 
-	isBalloonActive = true;
-	waterBalloon.setTranslation(position);
-	balloonVelocity = direction * balloonSpeed;
+	isCoconutActive = true;
+	coconut.setTranslation(position);
+	coconutVelocity = direction * coconutSpeed;
 }
 
-bool Scene::monkeyBalloonIntersection(Monkey* monkey)
+bool Scene::monkeyCoconutIntersection(Monkey* monkey)
 {
 	Vec3f capsuleCenter = monkey->getTranslation();
 	float top = capsuleCenter.y() + monkey->getCapsuleHeight()/2 - monkey->getCapsuleRadius();
 	float bottom = capsuleCenter.y() - monkey->getCapsuleHeight()/2 + monkey->getCapsuleRadius();
 	float distance;
-	if(top - waterBalloon.getTranslation().y() >= 0 && bottom - waterBalloon.getTranslation().y() <= 0)
+	if(top - coconut.getTranslation().y() >= 0 && bottom - coconut.getTranslation().y() <= 0)
 	{
-		Vec3f temp = capsuleCenter - waterBalloon.getTranslation();
+		Vec3f temp = capsuleCenter - coconut.getTranslation();
 		distance = Vec2f(temp.x(), temp.z()).length();
 	}
 	else
 	{
-		if(top - waterBalloon.getTranslation().y() < 0)
+		if(top - coconut.getTranslation().y() < 0)
 		{
-			distance = (capsuleCenter + Vec3f(0, monkey->getCapsuleHeight()/2 - monkey->getCapsuleRadius(), 0) - waterBalloon.getTranslation()).length();
+			distance = (capsuleCenter + Vec3f(0, monkey->getCapsuleHeight()/2 - monkey->getCapsuleRadius(), 0) - coconut.getTranslation()).length();
 		}
 		else
 		{
-			distance = (capsuleCenter + Vec3f(0, - monkey->getCapsuleHeight()/2 + monkey->getCapsuleRadius(), 0) - waterBalloon.getTranslation()).length();
+			distance = (capsuleCenter + Vec3f(0, - monkey->getCapsuleHeight()/2 + monkey->getCapsuleRadius(), 0) - coconut.getTranslation()).length();
 		}
 	}		
 
-	if(distance < monkey->getCapsuleRadius() + balloonRadius)
+	if(distance < monkey->getCapsuleRadius() + coconutRadius)
 		return true;
 	else
 		return false;

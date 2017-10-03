@@ -2,25 +2,24 @@
 
 #include <vector>
 
-#include <OpenSG/OSGGLUT.h>
-#include <OpenSG/OSGConfig.h>
-#include <OpenSG/OSGSimpleGeometry.h>
-#include <OpenSG/OSGGLUTWindow.h>
-#include <OpenSG/OSGMultiDisplayWindow.h>
-#include <OpenSG/OSGSceneFileHandler.h>
-#include <OpenSG/OSGDirectionalLight.h>
-#include <OpenSG/OSGComponentTransform.h>
-#include <OpenSG/OSGSimpleMaterial.h>
-#include <OpenSG/OSGMaterialGroup.h>
-#include <OpenSG/OSGSkyBackground.h>
-#include <OpenSG/OSGImage.h>
-#include <OpenSG/OSGTextureObjChunk.h>
-#include <OpenSG/OSGMaterialGroup.h>
-#include <OpenSG/OSGChunkMaterial.h>
-#include <OpenSG/OSGSimpleSHLChunk.h>
-#include <OpenSG/OSGImage.h>
+#include <OpenSG\OSGGLUT.h>
+#include <OpenSG\OSGConfig.h>
+#include <OpenSG\OSGSimpleGeometry.h>
+#include <OpenSG\OSGGLUTWindow.h>
+#include <OpenSG\OSGMultiDisplayWindow.h>
+#include <OpenSG\OSGSceneFileHandler.h>
+#include <OpenSG\OSGDirectionalLight.h>
+#include <OpenSG\OSGComponentTransform.h>
+#include <OpenSG\OSGSimpleMaterial.h>
+#include <OpenSG\OSGMaterialGroup.h>
+#include <OpenSG\OSGSkyBackground.h>
+#include <OpenSG\OSGTextureObjChunk.h>
+#include <OpenSG\OSGMaterialGroup.h>
+#include <OpenSG\OSGChunkMaterial.h>
+#include <OpenSG\OSGSimpleSHLChunk.h>
+#include <OpenSG\OSGImage.h>
 
-#include "../shader/Shaders.h"
+#include "..\shader\Shaders.h"
 #include "GameObject.h"
 #include "Monkey.h"
 #include "TimeManager.h"
@@ -31,10 +30,7 @@ class Scene
 {
 private:
 	NodeRecPtr base;	
-	GameObject boat;
-	SimpleSHLChunkRecPtr boatSHL;
-	SimpleSHLChunkRecPtr riverSHL;
-	SimpleSHLChunkRecPtr scenerySHL;
+	GameObject boat, scenery, river;
 		
 	std::vector<GameObject> riverSections;
 	float riverLength;
@@ -43,17 +39,17 @@ private:
 
 	std::vector<Monkey> monkeys;
 	
-	GameObject waterBalloon;
-	bool isBalloonActive;
-	float balloonSpeed;
-	float balloonRadius;
-	Vec3f balloonVelocity;
+	GameObject coconut;
+	bool isCoconutActive;
+	float coconutSpeed;
+	float coconutRadius;
+	Vec3f coconutVelocity;
 		
 	void animateScenery(float deltaTime);
 	void animateMonkeys(float deltaTime);
-	void animateBalloon(float deltaTime);
+	void animateCoconut(float deltaTime);
 	void checkCollisions(float deltaTime);
-	bool monkeyBalloonIntersection(Monkey* monkey);
+	bool monkeyCoconutIntersection(Monkey* monkey);
 
 public:
 	Scene();
@@ -62,7 +58,7 @@ public:
 	void initialize();
 	void update(float deltaTime, Matrix4f viewMatrix);
 	void moveNavSphere(Vec3f pos);
-	void throwBalloon(Vec3f position, Vec3f direction);
+	void throwCoconut(Vec3f position, Vec3f direction);
 	NodeTransitPtr getBase();
 
 };

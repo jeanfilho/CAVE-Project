@@ -223,7 +223,7 @@ void mouse(int button, int state, int x, int y)
 				direction = (rotation * direction) * rotation.conj();
 				Vec3f normDirection = Vec3f(direction.x(), direction.y(), direction.z());
 				normDirection.normalize();
-				scene.throwBalloon(mgr->getTranslation(), normDirection);
+				scene.throwCoconut(mgr->getTranslation(), normDirection);
 			}
 			break;
 		default:

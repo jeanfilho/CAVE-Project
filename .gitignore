@@ -1,7 +1,7 @@
 libraries/
 
 *.opensdf
-
+*.tlog
 *.sdf
 
 student_project/build_user/
