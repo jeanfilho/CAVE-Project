@@ -22,6 +22,7 @@
 #include "..\shader\Shaders.h"
 #include "GameObject.h"
 #include "Monkey.h"
+#include "Crocodile.h"
 #include "TimeManager.h"
 
 OSG_USING_NAMESPACE
@@ -30,14 +31,19 @@ class Scene
 {
 private:
 	NodeRecPtr base;	
-	GameObject boat, scenery, river;
+	GameObject boat, scenery, river, monkey;
 		
 	std::vector<GameObject> riverSections;
 	float riverLength;
 	float boatSpeed;
 	float gravity;
-
+	
 	std::vector<Monkey> monkeys;
+	int numberOfMonkeys;
+
+	
+	std::vector<Monkey> crocodiles;
+	int numberOfCrocodiles;
 	
 	GameObject coconut;
 	bool isCoconutActive;

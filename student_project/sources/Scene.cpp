@@ -4,6 +4,7 @@ Scene::Scene()
 {	
 	riverSections = std::vector<GameObject>();
 	monkeys = std::vector<Monkey>();
+	crocodiles = std::vector<Monkey>();
 
 	coconutSpeed = 1000;
 	isCoconutActive = false;
@@ -13,6 +14,7 @@ Scene::Scene()
 
 	riverLength = 1000;
 	boatSpeed = 100;
+	numberOfMonkeys = 2;
 }
 
 
@@ -33,7 +35,7 @@ void Scene::initialize()
 	dirLight1->setSpecular(Color4f(.1f,.1f,.1f,0.2f));	
 	dirLight1->setBeacon(world);
 
-	
+
 	/* Load boat */
 	boat = GameObject(SceneFileHandler::the()->read("models/boat.obj"), "models/Wood.png");
 	world->addChild(boat.getNode());
@@ -54,22 +56,23 @@ void Scene::initialize()
 		riverSections.push_back(riverSection);
 		world->addChild(riverSection.getNode());
 	}
-	
+
 	/* Load Coconut */
 	coconut = GameObject(SceneFileHandler::the()->read("models/coconut.obj"), "models/Coconut.png");
 	coconut.setTranslation(Vec3f(0,10,200));
 	world->addChild(coconut.getNode());
 
 	/* Load monkey */
-	float monkeyCapsuleHeight = 50;
-	float monkeyCapsuleRadius = 10;
-	for(int i = 0; i < monkeys.size(); i++)
+	float monkeyCapsuleHeight = 70;
+	float monkeyCapsuleRadius = 15;
+	monkey = GameObject(SceneFileHandler::the()->read("models/monkey.obj"), "models/Monkey.png");
+	for(int i = 0; i < numberOfMonkeys; i++)
 	{
-		monkeys.push_back(Monkey(makeBox(monkeyCapsuleRadius * 2,monkeyCapsuleHeight, monkeyCapsuleRadius * 2, 1, 1, 1), monkeyCapsuleRadius, monkeyCapsuleHeight, "models/coconut.png"));
-		monkeys[i].setTranslation(Vec3f(-50, 100, -50));
+		monkeys.push_back(Monkey(OSG::cloneTree(monkey.getMaterialNode()), monkeyCapsuleRadius, monkeyCapsuleHeight, monkeyCapsuleHeight/2));
+		monkeys[i].setTranslation(Vec3f(0, 0, 1000));
 		world->addChild(monkeys[i].getNode());
 	}
-		
+
 	/* Build tree */
 	base = makeNodeFor(dirLight1);
 	base->addChild(world);
@@ -81,6 +84,7 @@ void Scene::update(float deltaTime, Matrix4f viewMatrix)
 	scenery.updateUniformVariable("ViewMatrix", viewMatrix);
 	river.updateUniformVariable("ViewMatrix", viewMatrix);
 	coconut.updateUniformVariable("ViewMatrix", viewMatrix);
+	monkey.updateUniformVariable("ViewMatrix", viewMatrix);
 	animateScenery(deltaTime);
 	animateMonkeys(deltaTime);
 	animateCoconut(deltaTime);
@@ -96,15 +100,27 @@ void Scene::animateMonkeys(float deltaTime)
 {
 	for(int i = 0; i < monkeys.size(); i++)
 	{
-		if(monkeys[i].isHit)
+		switch(monkeys[i].monkeyState)
 		{
+		case Monkey::State::Hit:
+
 			monkeys[i].Velocity += Vec3f(0,-gravity*deltaTime,0);
 			monkeys[i].setTranslation(monkeys[i].getTranslation() + monkeys[i].Velocity * deltaTime);
-			if(monkeys[i].getTranslation().y() < -100)
+			if(monkeys[i].getTranslation().y() < -150)
 			{
-				monkeys[i].setTranslation(Vec3f(-50, 100, -50));
-				monkeys[i].isHit = false;
+				monkeys[i].setTranslation(Vec3f(0, 0, 1000));
+				monkeys[i].setRotation(Quaternion::identity());
+				monkeys[i].monkeyState = Monkey::State::Inactive;
 			}
+			break;
+		case Monkey::State::OnBoat:
+		case Monkey::State::OnRock:
+			monkeys[i].setTranslation(Vec3f(monkeys[i].getTranslation().x(), 10 * osgPow(sin(TimeManager::elapsedTime()*20), 2), monkeys[i].getTranslation().z()));
+			break;
+		case Monkey::State::Jumping:
+			break;
+		case Monkey::State::Inactive:
+			break;
 		}
 	}
 }
@@ -115,6 +131,7 @@ void Scene::animateCoconut(float deltaTime)
 	{
 		coconutVelocity += Vec3f(0, -gravity * deltaTime, 0);
 		coconut.setTranslation(coconut.getTranslation() + coconutVelocity * deltaTime);
+		coconut.setRotation(coconut.getRotation() * Quaternion(Vec3f(1,0,1), osgDegree2Rad(500 * deltaTime)));
 	}	
 }
 
@@ -133,14 +150,17 @@ void Scene::checkCollisions(float deltaTime)
 	if(!isCoconutActive)
 		return;
 
-	/* Test coconut against monkeys - Capsule-Sphere intersection */
+	/* Test coconut against active monkeys - Capsule-Sphere intersection */
 	for(int i = 0; i < monkeys.size(); i++)
 	{
+		if(monkeys[i].monkeyState == Monkey::State::Inactive)
+			continue;
+
 		if(monkeyCoconutIntersection(&monkeys[i]))
 		{
 			std::cout << "Monkey hit!" << std::endl;
 			Vec3f temp = monkeys[i].getTranslation() - coconut.getTranslation(); 
-			monkeys[i].isHit = true;
+			monkeys[i].monkeyState = Monkey::State::Hit;
 			monkeys[i].Velocity = Vec3f(temp.x(), 5, temp.z());
 			monkeys[i].Velocity.normalize();
 			monkeys[i].Velocity *= coconutSpeed / 2;
@@ -153,7 +173,7 @@ void Scene::checkCollisions(float deltaTime)
 	/* Test coconut against environment - check if sphere Y is under 0 */
 	if(coconut.getTranslation().y() < -coconutRadius)
 	{
-		coconut.setTranslation(Vec3f(0,10,200));
+		coconut.setTranslation(Vec3f(0,10,500));
 		isCoconutActive = false;
 	}
 }
@@ -170,7 +190,7 @@ void Scene::throwCoconut(Vec3f position, Vec3f direction)
 
 bool Scene::monkeyCoconutIntersection(Monkey* monkey)
 {
-	Vec3f capsuleCenter = monkey->getTranslation();
+	Vec3f capsuleCenter = monkey->getTranslation() + Vec3f(0,monkey->getCapsuleYOffset(),0);
 	float top = capsuleCenter.y() + monkey->getCapsuleHeight()/2 - monkey->getCapsuleRadius();
 	float bottom = capsuleCenter.y() - monkey->getCapsuleHeight()/2 + monkey->getCapsuleRadius();
 	float distance;
