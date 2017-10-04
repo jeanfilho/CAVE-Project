@@ -9,7 +9,13 @@ private:
 	Vec3f boxDimensions;
 
 public:
-	bool isActive;
+	enum State
+	{
+		Hit,
+		Lurking,
+		Inactive
+	};
+	State crocState;
 
 	Crocodile():GameObject(){}
 	~Crocodile(){}
@@ -19,7 +25,7 @@ public:
 		this->boxDimensions = boxDimensions;
 	}
 
-	Crocodile(NodeRecPtr geometry, Vec3f boxDimensions) : GameObject(geometry)
+	Crocodile(NodeRecPtr material, Vec3f boxDimensions) : GameObject(material)
 	{
 		this->boxDimensions = boxDimensions;
 	}

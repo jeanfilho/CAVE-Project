@@ -31,18 +31,23 @@ class Scene
 {
 private:
 	NodeRecPtr base;	
-	GameObject boat, scenery, river, monkey;
+	GameObject boat, scenery, river, monkey, croc;
 		
 	std::vector<GameObject> riverSections;
+	float boatWidth, boatLength;
 	float riverLength;
 	float boatSpeed;
 	float gravity;
+	float score;
+
+	float healthPoints;
 	
 	std::vector<Monkey> monkeys;
 	int numberOfMonkeys;
+	Vec3f rightRock, leftRock;
 
 	
-	std::vector<Monkey> crocodiles;
+	std::vector<Crocodile> crocodiles;
 	int numberOfCrocodiles;
 	
 	GameObject coconut;
@@ -54,10 +59,14 @@ private:
 	void animateScenery(float deltaTime);
 	void animateMonkeys(float deltaTime);
 	void animateCoconut(float deltaTime);
+	void animateCrocodile(float deltaTime);
 	void checkCollisions(float deltaTime);
 	bool monkeyCoconutIntersection(Monkey* monkey);
+	bool crocodileCoconutIntersection(Crocodile* croc);
 
 public:
+	bool isPlay;
+
 	Scene();
 	~Scene();
 
@@ -65,6 +74,8 @@ public:
 	void update(float deltaTime, Matrix4f viewMatrix);
 	void moveNavSphere(Vec3f pos);
 	void throwCoconut(Vec3f position, Vec3f direction);
+	void start();
+	float getScore();
 	NodeTransitPtr getBase();
 
 };

@@ -11,7 +11,6 @@ private:
 	float capsuleYOffset;
 
 public:
-	Vec3f Velocity;
 	enum State
 	{
 		Hit,
@@ -20,6 +19,12 @@ public:
 		Jumping,
 		Inactive
 	};
+
+	Vec3f Velocity;
+	float BaseY;
+	float jumpDeltaX;
+	Vec3f jumpTarget;
+	Vec3f jumpDirection;
 	State monkeyState;
 
 	Monkey():GameObject(){} 

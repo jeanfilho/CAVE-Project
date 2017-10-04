@@ -2,9 +2,8 @@
 
 Scene::Scene()
 {	
-	riverSections = std::vector<GameObject>();
-	monkeys = std::vector<Monkey>();
-	crocodiles = std::vector<Monkey>();
+	leftRock = Vec3f(-330, 95, -300);
+	rightRock = Vec3f(300, 63, 60);
 
 	coconutSpeed = 1000;
 	isCoconutActive = false;
@@ -12,15 +11,22 @@ Scene::Scene()
 
 	gravity = 9.8f * 100; /* cm/S² */
 
+	boatWidth = 200;
+	boatLength = 200;
 	riverLength = 1000;
-	boatSpeed = 100;
-	numberOfMonkeys = 2;
+	numberOfMonkeys = 4;
+	numberOfCrocodiles = 7;
+
+	riverSections = std::vector<GameObject>();
+	monkeys = std::vector<Monkey>();
+	crocodiles = std::vector<Crocodile>();
 }
 
 
 Scene::~Scene()
 {
 }
+
 void Scene::initialize()
 {
 	/*Lit Scene*/
@@ -43,10 +49,11 @@ void Scene::initialize()
 	/* Load river sections */
 	river = GameObject(SceneFileHandler::the()->read("models/river.obj"), "models/Water.png");
 	river.setVertexProgram(_water_vertex_shader);
+	river.addUniformVariable("SpeedFactor", 0.0f);
 
 	/* Load jungle mesh */
 	scenery = GameObject(SceneFileHandler::the()->read("models/Scenery.obj"), "models/Scenery.png");
-	for(int i = 0; i < 7; i++)
+	for(int i = 0; i < numberOfCrocodiles; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();
 		trans->setTranslation(Vec3f(0, -10, -i * riverLength));
@@ -70,7 +77,17 @@ void Scene::initialize()
 	{
 		monkeys.push_back(Monkey(OSG::cloneTree(monkey.getMaterialNode()), monkeyCapsuleRadius, monkeyCapsuleHeight, monkeyCapsuleHeight/2));
 		monkeys[i].setTranslation(Vec3f(0, 0, 1000));
+		monkeys[i].monkeyState = Monkey::State::Inactive;
 		world->addChild(monkeys[i].getNode());
+	}
+
+	/* Load Crocodile */
+	Vec3f crocBox = Vec3f(30,15,100);
+	croc = GameObject(SceneFileHandler::the()->read("models/crocodile.obj"), "models/Monkey.png");
+	for(int i = 0; i < numberOfCrocodiles; i++)
+	{
+		crocodiles.push_back(Crocodile(OSG::cloneTree(croc.getMaterialNode()), crocBox));
+		world->addChild(crocodiles[i].getNode());
 	}
 
 	/* Build tree */
@@ -78,17 +95,50 @@ void Scene::initialize()
 	base->addChild(world);
 }
 
+void Scene::start()
+{	
+	for(int i = 0; i < numberOfCrocodiles; i++)
+	{		
+		crocodiles[i].setTranslation(Vec3f(0, 0, 1000));
+		crocodiles[i].crocState = Crocodile::State::Inactive;
+	}
+	for(int i = 0; i < numberOfMonkeys; i++)
+	{
+		monkeys[i].setTranslation(Vec3f(0, 0, 1000));
+		monkeys[i].monkeyState = Monkey::State::Inactive;
+	}
+	for(int i = 0; i < numberOfCrocodiles; i++)
+	{
+		riverSections[i].setTranslation(Vec3f(0, -10, -i * riverLength));
+	}
+	boatSpeed = 300;
+	healthPoints = 100;
+	isPlay = true;
+}
+
 void Scene::update(float deltaTime, Matrix4f viewMatrix)
 {
 	boat.updateUniformVariable("ViewMatrix", viewMatrix);
 	scenery.updateUniformVariable("ViewMatrix", viewMatrix);
 	river.updateUniformVariable("ViewMatrix", viewMatrix);
+	river.updateUniformVariable("SpeedFactor", boatSpeed/100);
 	coconut.updateUniformVariable("ViewMatrix", viewMatrix);
 	monkey.updateUniformVariable("ViewMatrix", viewMatrix);
-	animateScenery(deltaTime);
+	croc.updateUniformVariable("ViewMatrix", viewMatrix);
+
+	if(!isPlay)
+		return;
+
 	animateMonkeys(deltaTime);
 	animateCoconut(deltaTime);
+	animateCrocodile(deltaTime);
+	animateScenery(deltaTime);
 	checkCollisions(deltaTime);
+
+	if(healthPoints <= 0)
+	{
+		isPlay = false;
+	}
 }
 
 NodeTransitPtr Scene::getBase()
@@ -100,24 +150,55 @@ void Scene::animateMonkeys(float deltaTime)
 {
 	for(int i = 0; i < monkeys.size(); i++)
 	{
+		if(monkeys[i].monkeyState != Monkey::State::Inactive && (monkeys[i].getTranslation().y() < -150 || monkeys[i].getTranslation().z() >= 300))
+		{
+			monkeys[i].setTranslation(Vec3f(0, 0, 1000));
+			monkeys[i].setRotation(Quaternion::identity());
+			monkeys[i].monkeyState = Monkey::State::Inactive;
+			continue;
+		}
+
+		float xPos = 0;
+		float jumpProgress = 0;
+		float jumpSpeed = 200;
 		switch(monkeys[i].monkeyState)
 		{
 		case Monkey::State::Hit:
-
 			monkeys[i].Velocity += Vec3f(0,-gravity*deltaTime,0);
 			monkeys[i].setTranslation(monkeys[i].getTranslation() + monkeys[i].Velocity * deltaTime);
-			if(monkeys[i].getTranslation().y() < -150)
+			break;
+		case Monkey::State::OnRock:
+			monkeys[i].setTranslation(Vec3f(monkeys[i].getTranslation().x(), monkeys[i].BaseY + 10 * osgPow(sin(TimeManager::elapsedTime()*20), 2), monkeys[i].getTranslation().z() + boatSpeed * deltaTime));
+			if(monkeys[i].getTranslation().z() >= -300)
 			{
-				monkeys[i].setTranslation(Vec3f(0, 0, 1000));
-				monkeys[i].setRotation(Quaternion::identity());
-				monkeys[i].monkeyState = Monkey::State::Inactive;
+				/* Get jump interpolation deltaX based on distance to landing spot */
+				float spotsWidth = boatWidth - 20;
+				monkeys[i].jumpTarget = Vec3f((spotsWidth/(monkeys.size()-1) * i - spotsWidth/2 ), 0, -75);
+				monkeys[i].jumpDirection = monkeys[i].jumpTarget - monkeys[i].getTranslation();
+				monkeys[i].jumpDirection.normalize();
+				monkeys[i].jumpDeltaX = osgAbs(monkeys[i].getTranslation().x() - monkeys[i].jumpTarget.x());
+				monkeys[i].monkeyState = Monkey::State::Jumping;
 			}
 			break;
 		case Monkey::State::OnBoat:
-		case Monkey::State::OnRock:
-			monkeys[i].setTranslation(Vec3f(monkeys[i].getTranslation().x(), 10 * osgPow(sin(TimeManager::elapsedTime()*20), 2), monkeys[i].getTranslation().z()));
+			healthPoints -= 3 * deltaTime;
+			monkeys[i].setTranslation(Vec3f(monkeys[i].getTranslation().x(), monkeys[i].BaseY + 10 * osgPow(sin(TimeManager::elapsedTime()*20), 2), monkeys[i].getTranslation().z()));
 			break;
 		case Monkey::State::Jumping:
+			xPos = monkeys[i].getTranslation().x() + monkeys[i].jumpDirection.x() * jumpSpeed * deltaTime;
+			jumpProgress = 1 - ((i % 2 == 0 ? monkeys[i].jumpTarget.x() - xPos : xPos - monkeys[i].jumpTarget.x())/monkeys[i].jumpDeltaX);
+
+			monkeys[i].setTranslation(
+				Vec3f(xPos,
+				(i % 2 == 0 ? leftRock.y() : rightRock.y()) +  100 * sin(jumpProgress * Pi * 1.3f),
+				monkeys[i].getTranslation().z() + monkeys[i].jumpDirection.z() * jumpSpeed * deltaTime));
+
+			if(jumpProgress >= 1.f)
+			{
+				monkeys[i].setTranslation(monkeys[i].jumpTarget);
+				monkeys[i].BaseY = 0;
+				monkeys[i].monkeyState = Monkey::State::OnBoat;
+			}
 			break;
 		case Monkey::State::Inactive:
 			break;
@@ -141,7 +222,63 @@ void Scene::animateScenery(float deltaTime)
 	{
 		riverSections[i].setTranslation(riverSections[i].getTranslation() + boatSpeed * deltaTime * Vec3f(0,0,1));
 		if(riverSections[i].getTranslation().z() > riverLength)
+		{
 			riverSections[i].setTranslation(riverSections[i].getTranslation() + Vec3f(0,0,-((int)riverSections.size()) * riverLength));
+
+			/* Set croc in position */
+			crocodiles[i].setTranslation(Vec3f(osgRand() * boatWidth - boatWidth/2, 0, riverSections[i].getTranslation().z()));
+			crocodiles[i].crocState = Crocodile::State::Lurking;
+
+			/* Try to spawn a monkey with 50% chance */
+			if(osgRand() <= .5f)
+			{
+				std::cout << "Spawning monkey" << std::endl;
+				for(int j = 0; j < monkeys.size(); j++)
+				{
+					if(monkeys[j].monkeyState != Monkey::State::Inactive)
+					{
+						std::cout << "Monkey " << j << " not available" << std::endl;
+						continue;
+					}
+
+					std::cout << "Monkey " << j << " spawned with success" << std::endl;
+					monkeys[j].monkeyState = Monkey::State::OnRock;
+					monkeys[j].setTranslation(riverSections[i].getTranslation() + (j % 2 == 0 ? leftRock : rightRock));
+					monkeys[j].BaseY = monkeys[j].getTranslation().y();
+					monkeys[j].setRotation(Quaternion(Vec3f(0,1,0), osgDegree2Rad(j % 2 == 0 ? 30 : -30)));
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Scene::animateCrocodile(float deltaTime)
+{
+	for(int i = 0; i < crocodiles.size(); i++)
+	{
+		switch(crocodiles[i].crocState)
+		{
+		case Crocodile::State::Hit:
+			crocodiles[i].setTranslation(crocodiles[i].getTranslation() + Vec3f(0, -30 * boatSpeed/100 * deltaTime, 0));
+			if(crocodiles[i].getTranslation().y() < -20)
+			{
+				crocodiles[i].setTranslation(Vec3f(0, 0, 1000));
+				crocodiles[i].crocState = Crocodile::State::Inactive;
+			}
+			break;
+		case Crocodile::State::Lurking:
+			crocodiles[i].setTranslation(crocodiles[i].getTranslation() + boatSpeed * deltaTime * Vec3f(0,0,1));
+			if(crocodiles[i].getTranslation().z() + crocodiles[i].getBoxDimensions().z()/2 > -boatLength/2)
+			{
+				std::cout << "Croc damaged raft for 20 HP" << std::endl;
+				healthPoints -= 20;
+				crocodiles[i].crocState = Crocodile::State::Hit;
+			}
+			break;
+		case Crocodile::State::Inactive:
+			break;
+		}
 	}
 }
 
@@ -170,6 +307,20 @@ void Scene::checkCollisions(float deltaTime)
 		}
 	}
 
+	/* Test coconut against all crocodiles */
+	for(int i = 0; i < crocodiles.size(); i++)
+	{
+		if(crocodiles[i].crocState != Crocodile::State::Lurking)
+			continue;
+
+		if(crocodileCoconutIntersection(&crocodiles[i]))
+		{
+			std::cout << "Croc hit!" << std::endl;
+			Vec3f temp = crocodiles[i].getTranslation() - coconut.getTranslation();
+			crocodiles[i].crocState = Crocodile::State::Hit;
+		}
+	}
+
 	/* Test coconut against environment - check if sphere Y is under 0 */
 	if(coconut.getTranslation().y() < -coconutRadius)
 	{
@@ -180,7 +331,7 @@ void Scene::checkCollisions(float deltaTime)
 
 void Scene::throwCoconut(Vec3f position, Vec3f direction)
 {
-	if(isCoconutActive)
+	if(isCoconutActive || !isPlay)
 		return;
 
 	isCoconutActive = true;
@@ -215,4 +366,14 @@ bool Scene::monkeyCoconutIntersection(Monkey* monkey)
 		return true;
 	else
 		return false;
+}
+
+bool Scene::crocodileCoconutIntersection(Crocodile* croc)
+{
+	return false;
+}
+
+float Scene::getScore()
+{
+	return score;
 }
