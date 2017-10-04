@@ -90,8 +90,8 @@ void Scene::initialize()
 	}
 
 	/* Load Crocodile */
-	Vec3f crocBox = Vec3f(30,15,100);
-	croc = GameObject(SceneFileHandler::the()->read("models/crocodile.obj"), "models/Monkey.png");
+	Vec3f crocBox = Vec3f(45,23,100);
+	croc = GameObject(SceneFileHandler::the()->read("models/crocodile.obj"), "models/Croc.png");
 	for(int i = 0; i < numberOfCrocodiles; i++)
 	{
 		crocodiles.push_back(Crocodile(OSG::cloneTree(croc.getMaterialNode()), crocBox));
@@ -296,7 +296,7 @@ void Scene::animateCrocodile(float deltaTime)
 		{
 		case Crocodile::State::Hit:
 			crocodiles[i].setTranslation(crocodiles[i].getTranslation() + Vec3f(0, -30 * boatSpeed/100 * deltaTime, 0));
-			if(crocodiles[i].getTranslation().y() < -20)
+			if(crocodiles[i].getTranslation().y() < -50)
 			{
 				crocodiles[i].setTranslation(Vec3f(0, 0, 1000));
 				crocodiles[i].crocState = Crocodile::State::Inactive;
