@@ -14,12 +14,18 @@ Scene::Scene()
 	boatWidth = 200;
 	boatLength = 200;
 	riverLength = 1000;
+	boatSpeed = 300;
 	numberOfMonkeys = 4;
 	numberOfCrocodiles = 7;
 
 	riverSections = std::vector<GameObject>();
 	monkeys = std::vector<Monkey>();
 	crocodiles = std::vector<Crocodile>();
+
+	windowX = 800;
+	windowY = 600;
+
+	surviveTime = 90;
 }
 
 
@@ -29,6 +35,8 @@ Scene::~Scene()
 
 void Scene::initialize()
 {
+	startBlock = TimeManager::elapsedTime();
+
 	/*Lit Scene*/
 	NodeRecPtr world = Node::create();
 	world->setCore(Group::create());
@@ -87,16 +95,31 @@ void Scene::initialize()
 	for(int i = 0; i < numberOfCrocodiles; i++)
 	{
 		crocodiles.push_back(Crocodile(OSG::cloneTree(croc.getMaterialNode()), crocBox));
+		crocodiles[i].setTranslation(Vec3f(0, 0, 1000));
 		world->addChild(crocodiles[i].getNode());
 	}
 
 	/* Build tree */
 	base = makeNodeFor(dirLight1);
 	base->addChild(world);
+
+	/* Load foreground */
+	fg = ImageForeground::create();
+	loseImg = Image::create();
+	winImg = Image::create();
+	startImg = Image::create();
+	loseImg->read("textures/lose.png");
+	winImg->read("textures/win.png");
+	startImg->read("textures/start.png");
+	displayForeground();
 }
 
 void Scene::start()
 {	
+	if(TimeManager::elapsedTime() - startBlock < 2)
+		return;
+
+	levelStartTime = TimeManager::elapsedTime();
 	for(int i = 0; i < numberOfCrocodiles; i++)
 	{		
 		crocodiles[i].setTranslation(Vec3f(0, 0, 1000));
@@ -113,6 +136,8 @@ void Scene::start()
 	}
 	boatSpeed = 300;
 	healthPoints = 100;
+	score = 1;
+	fg->clear();
 	isPlay = true;
 }
 
@@ -135,9 +160,19 @@ void Scene::update(float deltaTime, Matrix4f viewMatrix)
 	animateScenery(deltaTime);
 	checkCollisions(deltaTime);
 
+	if(boatSpeed < 500)
+	{
+		boatSpeed += 5 * deltaTime;
+		if(boatSpeed > 500)
+			boatSpeed= 500;
+	}
+
 	if(healthPoints <= 0)
 	{
 		isPlay = false;
+		score = TimeManager::elapsedTime() - levelStartTime;
+		startBlock = TimeManager::elapsedTime();
+		displayForeground();
 	}
 }
 
@@ -181,7 +216,7 @@ void Scene::animateMonkeys(float deltaTime)
 			}
 			break;
 		case Monkey::State::OnBoat:
-			healthPoints -= 3 * deltaTime;
+			healthPoints -= 1 * deltaTime;
 			monkeys[i].setTranslation(Vec3f(monkeys[i].getTranslation().x(), monkeys[i].BaseY + 10 * osgPow(sin(TimeManager::elapsedTime()*20), 2), monkeys[i].getTranslation().z()));
 			break;
 		case Monkey::State::Jumping:
@@ -271,8 +306,8 @@ void Scene::animateCrocodile(float deltaTime)
 			crocodiles[i].setTranslation(crocodiles[i].getTranslation() + boatSpeed * deltaTime * Vec3f(0,0,1));
 			if(crocodiles[i].getTranslation().z() + crocodiles[i].getBoxDimensions().z()/2 > -boatLength/2)
 			{
-				std::cout << "Croc damaged raft for 20 HP" << std::endl;
-				healthPoints -= 20;
+				std::cout << "Croc damaged raft for 15 HP. Remaining: " << healthPoints << " HP" << std::endl;
+				healthPoints -= 15;
 				crocodiles[i].crocState = Crocodile::State::Hit;
 			}
 			break;
@@ -368,12 +403,46 @@ bool Scene::monkeyCoconutIntersection(Monkey* monkey)
 		return false;
 }
 
+/* Source: https://stackoverflow.com/questions/4578967/cube-sphere-intersection-test */
 bool Scene::crocodileCoconutIntersection(Crocodile* croc)
 {
-	return false;
+	Vec3f C1 = croc->getTranslation() - croc->getBoxDimensions()/2;
+	Vec3f C2 = croc->getTranslation() + croc->getBoxDimensions()/2;
+	Vec3f S = coconut.getTranslation();
+	float R = coconutRadius;
+    float dist_squared = R * R;
+
+    /* assume C1 and C2 are element-wise sorted, if not, do that now */
+    if (S.x() < C1.x()) dist_squared -= osgPow((S.x() - C1.x()),2);
+    else if (S.x() > C2.x()) dist_squared -= osgPow((S.x() - C2.x()),2);
+    if (S.y() < C1.y()) dist_squared -= osgPow((S.y() - C1.y()),2);
+    else if (S.y() > C2.y()) dist_squared -= osgPow((S.y() - C2.y()),2);
+    if (S.z() < C1.z()) dist_squared -= osgPow((S.z() - C1.z()),2);
+    else if (S.z() > C2.z()) dist_squared -= osgPow((S.z() - C2.z()),2);
+    return dist_squared > 0;
 }
 
 float Scene::getScore()
 {
 	return score;
+}
+
+void Scene::displayForeground()
+{
+	fg->clearImages();
+	if(!isPlay)
+	{
+		fg->addImage(startImg, Pnt2f(windowX/2 - 200, windowY/2 - 60));
+		if(score == 0)
+			return;
+		if(score > surviveTime)
+			fg->addImage(winImg, Pnt2f(windowX/2 - 200, windowY/2 + 60));
+		else
+			fg->addImage(loseImg, Pnt2f(windowX/2 - 200, windowY/2 + 60));
+	}
+}
+
+ImageForegroundRecPtr Scene::getImageForeground()
+{
+	return fg;
 }

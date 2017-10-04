@@ -18,6 +18,7 @@
 #include <OpenSG\OSGChunkMaterial.h>
 #include <OpenSG\OSGSimpleSHLChunk.h>
 #include <OpenSG\OSGImage.h>
+#include <OpenSG\OSGImageForeground.h>
 
 #include "..\shader\Shaders.h"
 #include "GameObject.h"
@@ -30,6 +31,8 @@ OSG_USING_NAMESPACE
 class Scene
 {
 private:
+	ImageForegroundRecPtr fg;
+	ImageRecPtr winImg, loseImg, startImg;
 	NodeRecPtr base;	
 	GameObject boat, scenery, river, monkey, croc;
 		
@@ -38,7 +41,12 @@ private:
 	float riverLength;
 	float boatSpeed;
 	float gravity;
-	float score;
+	float startBlock;
+	float levelStartTime;
+	int score;
+	int windowX, windowY;
+	int surviveTime;
+
 
 	float healthPoints;
 	
@@ -61,6 +69,7 @@ private:
 	void animateCoconut(float deltaTime);
 	void animateCrocodile(float deltaTime);
 	void checkCollisions(float deltaTime);
+	void displayForeground();
 	bool monkeyCoconutIntersection(Monkey* monkey);
 	bool crocodileCoconutIntersection(Crocodile* croc);
 
@@ -77,6 +86,7 @@ public:
 	void start();
 	float getScore();
 	NodeTransitPtr getBase();
+	ImageForegroundRecPtr getImageForeground();
 
 };
 

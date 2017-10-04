@@ -5,16 +5,16 @@
 #include <ios>
 #include <ctime>
 
-#include <OpenSG/OSGGLUT.h>
-#include <OpenSG/OSGConfig.h>
-#include <OpenSG/OSGSimpleGeometry.h>
-#include <OpenSG/OSGGLUTWindow.h>
-#include <OpenSG/OSGMultiDisplayWindow.h>
-#include <OpenSG/OSGSceneFileHandler.h>
+#include <OpenSG\OSGGLUT.h>
+#include <OpenSG\OSGConfig.h>
+#include <OpenSG\OSGSimpleGeometry.h>
+#include <OpenSG\OSGGLUTWindow.h>
+#include <OpenSG\OSGMultiDisplayWindow.h>
+#include <OpenSG\OSGSceneFileHandler.h>
 
-#include <OSGCSM/OSGCAVESceneManager.h>
-#include <OSGCSM/OSGCAVEConfig.h>
-#include <OSGCSM/appctrl.h>
+#include <OSGCSM\OSGCAVESceneManager.h>
+#include <OSGCSM\OSGCAVEConfig.h>
+#include <OSGCSM\appctrl.h>
 
 #include <vrpn_Tracker.h>
 #include <vrpn_Button.h>
@@ -33,9 +33,9 @@ vrpn_Analog_Remote* analog = nullptr;
 
 Scene scene = Scene();
 TimeManager timeMgr = TimeManager();
-float horizontalSpeed = 20;
-float verticalSpeed = 20;
-float mouseSensitivity = 1;
+float horizontalSpeed = 10;
+float verticalSpeed = 10;
+float mouseSensitivity = .6f;
 float amountToMoveX, amountToMoveZ, amountToMoveY;
 
 bool isMouseWarped;
@@ -86,6 +86,8 @@ void VRPN_CALLBACK callback_button(void* userData, const vrpn_BUTTONCB button)
 {
 	if (button.button == 3 && button.state == 1)
 		print_tracker();
+	else if(!scene.isPlay && button.state == 1)
+		scene.start();
 	else if(button.button == 0 && button.state == 1)
 	{	
 		Quaternion direction = Quaternion(0,0,-1,0);
@@ -138,50 +140,50 @@ void keyboard(unsigned char k, int x, int y)
 	Real32 ed;
 	switch(k)
 	{
-		case 'q':
-		case 27: 
-			cleanup();
-			exit(EXIT_SUCCESS);
-			break;
-		case 'e':
-			ed = mgr->getEyeSeparation() * .9f;
-			std::cout << "Eye distance: " << ed << '\n';
-			mgr->setEyeSeparation(ed);
-			break;
-		case 'E':
-			ed = mgr->getEyeSeparation() * 1.1f;
-			std::cout << "Eye distance: " << ed << '\n';
-			mgr->setEyeSeparation(ed);
-			break;
-		case 'h':
-			cfg.setFollowHead(!cfg.getFollowHead());
-			std::cout << "following head: " << std::boolalpha << cfg.getFollowHead() << '\n';
-			break;
-		case 'i':
-			print_tracker();
-			break;
+	case 'q':
+	case 27: 
+		cleanup();
+		exit(EXIT_SUCCESS);
+		break;
+	case 'e':
+		ed = mgr->getEyeSeparation() * .9f;
+		std::cout << "Eye distance: " << ed << '\n';
+		mgr->setEyeSeparation(ed);
+		break;
+	case 'E':
+		ed = mgr->getEyeSeparation() * 1.1f;
+		std::cout << "Eye distance: " << ed << '\n';
+		mgr->setEyeSeparation(ed);
+		break;
+	case 'h':
+		cfg.setFollowHead(!cfg.getFollowHead());
+		std::cout << "following head: " << std::boolalpha << cfg.getFollowHead() << '\n';
+		break;
+	case 'i':
+		print_tracker();
+		break;
 
 		/* Movement */
-		case 'w':
-			amountToMoveZ = -horizontalSpeed * timeMgr.deltaTime();
-			break;
-		case 's':
-			amountToMoveZ = horizontalSpeed * timeMgr.deltaTime();
-			break;
-		case 'd':
-			amountToMoveX = horizontalSpeed * timeMgr.deltaTime();
-			break;
-		case 'a':
-			amountToMoveX = -horizontalSpeed * timeMgr.deltaTime();
-			break;
-		case 32:
-			amountToMoveY = verticalSpeed * timeMgr.deltaTime();
-			break;
-		case 'c':
-			amountToMoveY = -verticalSpeed * timeMgr.deltaTime();
-			break;
-		default:
-			std::cout << "Key '" << k << "' ignored\n";
+	case 'w':
+		amountToMoveZ = -horizontalSpeed * timeMgr.deltaTime();
+		break;
+	case 's':
+		amountToMoveZ = horizontalSpeed * timeMgr.deltaTime();
+		break;
+	case 'd':
+		amountToMoveX = horizontalSpeed * timeMgr.deltaTime();
+		break;
+	case 'a':
+		amountToMoveX = -horizontalSpeed * timeMgr.deltaTime();
+		break;
+	case 32:
+		amountToMoveY = verticalSpeed * timeMgr.deltaTime();
+		break;
+	case 'c':
+		amountToMoveY = -verticalSpeed * timeMgr.deltaTime();
+		break;
+	default:
+		std::cout << "Key '" << k << "' ignored\n";
 	}
 }
 
@@ -190,25 +192,25 @@ void keyboardUp(unsigned char k, int x, int y)
 	switch(k)
 	{
 		/* Movement stop*/
-		case 'w':
-		case 'W':
-		case 's':
-		case 'S':
-			amountToMoveZ = 0;
-			break;
-		case 'd':
-		case 'D':
-		case 'a':
-		case 'A':
-			amountToMoveX = 0;
-			break;
-		case 32:
-		case 'c':
-		case 'C':
-			amountToMoveY = 0;
-			break;
-		default:
-			std::cout << "Key '" << k << "' ignored\n";
+	case 'w':
+	case 'W':
+	case 's':
+	case 'S':
+		amountToMoveZ = 0;
+		break;
+	case 'd':
+	case 'D':
+	case 'a':
+	case 'A':
+		amountToMoveX = 0;
+		break;
+	case 32:
+	case 'c':
+	case 'C':
+		amountToMoveY = 0;
+		break;
+	default:
+		std::cout << "Key '" << k << "' ignored\n";
 	}
 }
 
@@ -216,8 +218,12 @@ void mouse(int button, int state, int x, int y)
 {
 	switch(button)
 	{
-		case GLUT_LEFT_BUTTON:
-			if(state == GLUT_DOWN)
+	case GLUT_LEFT_BUTTON:
+		if(state == GLUT_DOWN)
+		{
+			if(!scene.isPlay)
+				scene.start();
+			else
 			{
 				Quaternion direction = Quaternion(0,0,-1,0);
 				direction = (rotation * direction) * rotation.conj();
@@ -225,9 +231,10 @@ void mouse(int button, int state, int x, int y)
 				normDirection.normalize();
 				scene.throwCoconut(mgr->getTranslation(), normDirection);
 			}
-			break;
-		default:
-			break;
+		}
+		break;
+	default:
+		break;
 	}
 
 }
@@ -239,7 +246,7 @@ void motionPassive(int x, int y)
 	{
 		int middleX = glutGet(GLUT_WINDOW_WIDTH)/2;
 		int middleY = glutGet(GLUT_WINDOW_HEIGHT)/2;
-	
+
 		int deltaX = x - middleX;
 		int deltaY = y - middleY;
 		float rotateY =-deltaX * timeMgr.deltaTime() * mouseSensitivity;
@@ -247,13 +254,13 @@ void motionPassive(int x, int y)
 		rotation *= Quaternion(Vec3f(0,1,0), rotateY);
 		rotation.normalize();	
 		mgr->addYRotate(rotateY);
-		
+
 		isMouseWarped = true;
 		glutWarpPointer(middleX, middleY);		
 	}
 	else
 		isMouseWarped = false;
-	
+
 }
 
 void motion(int x, int y)
@@ -291,7 +298,7 @@ void setupGLUT(int *argc, char *argv[])
 		const auto speed = 1.f;
 		mgr->setUserTransform(head_position, head_orientation);
 		//mgr->setTranslation(mgr->getTranslation() + speed * analog_values);
-		
+
 		/* Keyboard Translation */
 		if(cfg.getNumActiveWalls() <= 1)
 		{
@@ -421,7 +428,7 @@ int main(int argc, char **argv)
 		InitTracker(cfg);
 
 		MultiDisplayWindowRefPtr mwin = createAppWindow(cfg, cfg.getBroadcastaddress());
-
+		
 		if (!gameScene) 
 		{
 			//Initialize own game scene
@@ -433,7 +440,7 @@ int main(int argc, char **argv)
 		/* Background */
 		SkyBackgroundRecPtr bg = SkyBackground::create();
 		setupBackground(bg);
-		
+
 		mgr = new OSGCSM::CAVESceneManager(&cfg);
 		mgr->setWindow(mwin);
 		mgr->setRoot(gameScene);
@@ -441,9 +448,14 @@ int main(int argc, char **argv)
 		mgr->getWindow()->init();
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
+
 		for(int i = 0; i < cfg.getNumActiveWalls(); i++)
 		{
 			mgr->setBackground(i,bg);
+			if(cfg.getNumActiveWalls() <= 1)
+				mgr->setForeground(0, scene.getImageForeground(), true);
+			else
+				mgr->setForeground(OSGCSM::CAVEWall::wallFront, scene.getImageForeground(), true); //TODO right wall
 		}
 	}
 	catch(const std::exception& e)
