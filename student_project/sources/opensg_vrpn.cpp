@@ -283,13 +283,15 @@ void setupGLUT(int *argc, char *argv[])
 	{
 		mgr->resize(w, h);
 		glutPostRedisplay();
-	});
-	glutMotionFunc(motion);
-	glutPassiveMotionFunc(motionPassive);
+        });
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
 	if(cfg.getNumActiveWalls() <= 1)
-		glutMouseFunc(mouse);
+        {
+            glutPassiveMotionFunc(motionPassive);
+            glutMouseFunc(mouse);
+            glutMotionFunc(motion);
+        }
 	glutIdleFunc([]()
 	{
 		timeMgr.update();
@@ -449,13 +451,15 @@ int main(int argc, char **argv)
 		mgr->turnWandOff();
 		mgr->setHeadlight(false);
 
+                std::cout << "Active walls: " << cfg.getNumActiveWalls()  << std::endl;
+
 		for(int i = 0; i < cfg.getNumActiveWalls(); i++)
 		{
 			mgr->setBackground(i,bg);
 			if(cfg.getNumActiveWalls() <= 1)
-				mgr->setForeground(0, scene.getImageForeground(), true);
+                                mgr->setForeground(0, scene.getImageForeground(), true);
 			else
-				mgr->setForeground(OSGCSM::CAVEWall::wallFront, scene.getImageForeground(), true); //TODO right wall
+                                mgr->setForeground(2, scene.getImageForeground(), true);
 		}
 	}
 	catch(const std::exception& e)
