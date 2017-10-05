@@ -3,6 +3,7 @@
 
 CMakeFiles/MyProject.dir/sources/Scene.cpp.o
  /home/ga46puh/CAVE-project/student_project/shader/Shaders.h
+ /home/ga46puh/CAVE-project/student_project/sources/Crocodile.h
  /home/ga46puh/CAVE-project/student_project/sources/GameObject.h
  /home/ga46puh/CAVE-project/student_project/sources/Monkey.h
  /home/ga46puh/CAVE-project/student_project/sources/Scene.cpp
@@ -171,6 +172,11 @@ CMakeFiles/MyProject.dir/sources/Scene.cpp.o
  /sw/opensg/latest/include/OpenSG/OSGFieldType.inl
  /sw/opensg/latest/include/OpenSG/OSGFixed.h
  /sw/opensg/latest/include/OpenSG/OSGFixed.inl
+ /sw/opensg/latest/include/OpenSG/OSGForeground.h
+ /sw/opensg/latest/include/OpenSG/OSGForeground.inl
+ /sw/opensg/latest/include/OpenSG/OSGForegroundBase.h
+ /sw/opensg/latest/include/OpenSG/OSGForegroundBase.inl
+ /sw/opensg/latest/include/OpenSG/OSGForegroundFields.h
  /sw/opensg/latest/include/OpenSG/OSGGL.h
  /sw/opensg/latest/include/OpenSG/OSGGLDefineMapper.h
  /sw/opensg/latest/include/OpenSG/OSGGLDefineMapper.inl
@@ -234,6 +240,11 @@ CMakeFiles/MyProject.dir/sources/Scene.cpp.o
  /sw/opensg/latest/include/OpenSG/OSGImageBase.inl
  /sw/opensg/latest/include/OpenSG/OSGImageComposerFields.h
  /sw/opensg/latest/include/OpenSG/OSGImageFields.h
+ /sw/opensg/latest/include/OpenSG/OSGImageForeground.h
+ /sw/opensg/latest/include/OpenSG/OSGImageForeground.inl
+ /sw/opensg/latest/include/OpenSG/OSGImageForegroundBase.h
+ /sw/opensg/latest/include/OpenSG/OSGImageForegroundBase.inl
+ /sw/opensg/latest/include/OpenSG/OSGImageForegroundFields.h
  /sw/opensg/latest/include/OpenSG/OSGLight.h
  /sw/opensg/latest/include/OpenSG/OSGLight.inl
  /sw/opensg/latest/include/OpenSG/OSGLightBase.h
@@ -532,6 +543,7 @@ CMakeFiles/MyProject.dir/sources/Scene.cpp.o
  /sw/opensg/latest/include/OpenSG/OSGXWindowFields.h
 CMakeFiles/MyProject.dir/sources/opensg_vrpn.cpp.o
  /home/ga46puh/CAVE-project/student_project/shader/Shaders.h
+ /home/ga46puh/CAVE-project/student_project/sources/Crocodile.h
  /home/ga46puh/CAVE-project/student_project/sources/GameObject.h
  /home/ga46puh/CAVE-project/student_project/sources/Monkey.h
  /home/ga46puh/CAVE-project/student_project/sources/Scene.h

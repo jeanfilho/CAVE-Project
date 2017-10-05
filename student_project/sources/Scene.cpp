@@ -60,7 +60,7 @@ void Scene::initialize()
 	river.addUniformVariable("SpeedFactor", 0.0f);
 
 	/* Load jungle mesh */
-	scenery = GameObject(SceneFileHandler::the()->read("models/Scenery.obj"), "models/Scenery.png");
+	scenery = GameObject(SceneFileHandler::the()->read("models/scenery.obj"), "models/Scenery.png");
 	for(int i = 0; i < numberOfCrocodiles; i++)
 	{
 		ComponentTransformRecPtr trans = ComponentTransform::create();

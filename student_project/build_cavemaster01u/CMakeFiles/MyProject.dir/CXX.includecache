@@ -10,11 +10,29 @@
 string
 -
 
+/home/ga46puh/CAVE-project/student_project/sources/Crocodile.h
+OpenSG/OSGComponentTransform.h
+-
+GameObject.h
 /home/ga46puh/CAVE-project/student_project/sources/GameObject.h
+
+/home/ga46puh/CAVE-project/student_project/sources/GameObject.h
+string
+-
 OpenSG/OSGComponentTransform.h
 -
 OpenSG/OSGChunkMaterial.h
 -
+OpenSG/OSGTextureObjChunk.h
+-
+OpenSG/OSGMaterialGroup.h
+-
+OpenSG/OSGSimpleSHLChunk.h
+-
+OpenSG/OSGImage.h
+-
+../shader/Shaders.h
+/home/ga46puh/CAVE-project/student_project/shader/Shaders.h
 
 /home/ga46puh/CAVE-project/student_project/sources/Monkey.h
 OpenSG/OSGComponentTransform.h
@@ -51,8 +69,6 @@ OpenSG/OSGMaterialGroup.h
 -
 OpenSG/OSGSkyBackground.h
 -
-OpenSG/OSGImage.h
--
 OpenSG/OSGTextureObjChunk.h
 -
 OpenSG/OSGMaterialGroup.h
@@ -63,12 +79,16 @@ OpenSG/OSGSimpleSHLChunk.h
 -
 OpenSG/OSGImage.h
 -
+OpenSG/OSGImageForeground.h
+-
 ../shader/Shaders.h
 /home/ga46puh/CAVE-project/student_project/shader/Shaders.h
 GameObject.h
 /home/ga46puh/CAVE-project/student_project/sources/GameObject.h
 Monkey.h
 /home/ga46puh/CAVE-project/student_project/sources/Monkey.h
+Crocodile.h
+/home/ga46puh/CAVE-project/student_project/sources/Crocodile.h
 TimeManager.h
 /home/ga46puh/CAVE-project/student_project/sources/TimeManager.h
 

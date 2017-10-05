@@ -5,16 +5,16 @@
 #include <ios>
 #include <ctime>
 
-#include <OpenSG\OSGGLUT.h>
-#include <OpenSG\OSGConfig.h>
-#include <OpenSG\OSGSimpleGeometry.h>
-#include <OpenSG\OSGGLUTWindow.h>
-#include <OpenSG\OSGMultiDisplayWindow.h>
-#include <OpenSG\OSGSceneFileHandler.h>
+#include <OpenSG/OSGGLUT.h>
+#include <OpenSG/OSGConfig.h>
+#include <OpenSG/OSGSimpleGeometry.h>
+#include <OpenSG/OSGGLUTWindow.h>
+#include <OpenSG/OSGMultiDisplayWindow.h>
+#include <OpenSG/OSGSceneFileHandler.h>
 
-#include <OSGCSM\OSGCAVESceneManager.h>
-#include <OSGCSM\OSGCAVEConfig.h>
-#include <OSGCSM\appctrl.h>
+#include <OSGCSM/OSGCAVESceneManager.h>
+#include <OSGCSM/OSGCAVEConfig.h>
+#include <OSGCSM/appctrl.h>
 
 #include <vrpn_Tracker.h>
 #include <vrpn_Button.h>

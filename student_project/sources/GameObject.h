@@ -2,14 +2,14 @@
 
 #include <string>
 
-#include <OpenSG\OSGComponentTransform.h>
-#include <OpenSG\OSGChunkMaterial.h>
-#include <OpenSG\OSGTextureObjChunk.h>
-#include <OpenSG\OSGMaterialGroup.h>
-#include <OpenSG\OSGSimpleSHLChunk.h>
-#include <OpenSG\OSGImage.h>
+#include <OpenSG/OSGComponentTransform.h>
+#include <OpenSG/OSGChunkMaterial.h>
+#include <OpenSG/OSGTextureObjChunk.h>
+#include <OpenSG/OSGMaterialGroup.h>
+#include <OpenSG/OSGSimpleSHLChunk.h>
+#include <OpenSG/OSGImage.h>
 
-#include "..\shader\Shaders.h"
+#include "../shader/Shaders.h"
 
 OSG_USING_NAMESPACE
 
